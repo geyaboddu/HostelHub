@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | HostelHub</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #eaf6ff, #ffffff);
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            width: 400px;
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 12px;
+
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            text-align: center;
+
+            font-size: 28px;
+            font-weight: bold;
+
+            color: #1e3a5f;
+
+            margin-bottom: 10px;
+        }
+
+        .logo span {
+            color: #2196f3;
+        }
+
+        h2 {
+            text-align: center;
+
+            color: #333;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+
+            color: #777;
+
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 12px;
+
+            margin-bottom: 20px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 6px;
+
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+
+            border-color: #2196f3;
+        }
+
+        .login-btn {
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            background-color: #2196f3;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background-color: #1769aa;
+        }
+
+        .register {
+            text-align: center;
+
+            margin-top: 20px;
+
+            color: #666;
+        }
+
+        .register a {
+            color: #2196f3;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+        .back {
+            text-align: center;
+
+            margin-top: 18px;
+        }
+
+        .back a {
+            text-decoration: none;
+
+            color: #555;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="logo">
+            Hostel<span>Hub</span>
+        </div>
+
+        <h2>Student Login</h2>
+
+        <p class="subtitle">
+            Login to access your hostel account
+        </p>
+
+
+        <!-- IMPORTANT: Connects to LoginServlet -->
+
+        <form action="LoginServlet" method="post">
+
+            <label for="studentId">
+                Student ID
+            </label>
+
+            <input
+                type="text"
+                id="studentId"
+                name="studentId"
+                placeholder="Enter your Student ID"
+                required
+            >
+
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="login-btn">
+                Login
+            </button>
+
+        </form>
+
+
+        <div class="register">
+
+            Don't have an account?
+
+            <a href="register.html">
+                Register
+            </a>
+
+        </div>
+
+
+        <div class="back">
+
+            <a href="homepage.html">
+                ← Back to Home
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
