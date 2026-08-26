@@ -57,7 +57,7 @@ public class RegisterServlet extends HttpServlet {
 
             if (con == null) {
                 out.println("<h2>Database Connection Failed</h2>");
-                out.println("<p>Could not connect to MySQL.</p>");
+                out.println("<p>Could not connect to PostgreSQL.</p>");
                 return;
             }
 

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Student Dashboard | HostelHub</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8fc;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+
+        .navbar {
+            background: #1e3a5f;
+            color: white;
+
+            padding: 18px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #2196f3;
+        }
+
+        .logout {
+            background: #e53935;
+            color: white;
+
+            text-decoration: none;
+
+            padding: 9px 18px;
+
+            border-radius: 6px;
+        }
+
+        .logout:hover {
+            background: #c62828;
+        }
+
+
+        /* Main Container */
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+
+            margin: 40px auto;
+        }
+
+        h1 {
+            color: #1e3a5f;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* Cards */
+
+        .cards {
+            display: flex;
+
+            gap: 25px;
+
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 5px 18px rgba(0, 0, 0, 0.10);
+
+            flex: 1;
+
+            min-width: 300px;
+        }
+
+        .card h2 {
+            color: #1e3a5f;
+
+            margin-bottom: 20px;
+        }
+
+        .card p {
+            color: #555;
+
+            margin: 14px 0;
+
+            font-size: 16px;
+        }
+
+
+        /* Status */
+
+        .status {
+            color: #ff9800;
+
+            font-weight: bold;
+        }
+
+
+        /* Buttons */
+
+        .dashboard-btn {
+            display: block;
+
+            width: 100%;
+
+            padding: 13px;
+
+            margin-top: 15px;
+
+            background-color: #2196f3;
+
+            color: white;
+
+            text-decoration: none;
+
+            text-align: center;
+
+            border-radius: 6px;
+
+            font-weight: bold;
+
+            box-sizing: border-box;
+        }
+
+        .dashboard-btn:hover {
+            background-color: #1769aa;
+        }
+
+        .allocation-btn {
+            display: block;
+
+            width: 100%;
+
+            padding: 13px;
+
+            margin-top: 15px;
+
+            background-color: #4caf50;
+
+            color: white;
+
+            text-decoration: none;
+
+            text-align: center;
+
+            border-radius: 6px;
+
+            font-weight: bold;
+
+            box-sizing: border-box;
+        }
+
+        .allocation-btn:hover {
+            background-color: #388e3c;
+        }
+
+
+        /* Responsive */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+            .cards {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- Navigation Bar -->
+
+    <div class="navbar">
+
+        <div class="logo">
+            Hostel<span>Hub</span>
+        </div>
+
+        <a href="login.html"
+           class="logout">
+
+            Logout
+
+        </a>
+
+    </div>
+
+
+    <!-- Main Content -->
+
+    <div class="container">
+
+        <h1>
+            Student Dashboard
+        </h1>
+
+        <p class="subtitle">
+            Welcome to your HostelHub dashboard
+        </p>
+
+
+        <div class="cards">
+
+
+            <!-- Student Information -->
+
+            <div class="card">
+
+                <h2>
+                    Student Information
+                </h2>
+
+                <p>
+                    <strong>Student ID:</strong>
+                    STU001
+                </p>
+
+                <p>
+                    <strong>Student Name:</strong>
+                    Student Name
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    student@example.com
+                </p>
+
+            </div>
+
+
+            <!-- Hostel Information -->
+
+            <div class="card">
+
+                <h2>
+                    Hostel Information
+                </h2>
+
+                <p>
+                    <strong>Status:</strong>
+
+                    <span class="status">
+                        Check Allocation
+                    </span>
+                </p>
+
+                <p>
+                    Apply for a room or check your existing room allocation.
+                </p>
+
+
+                <!-- Apply for Room -->
+
+                <a href="allocation.html"
+                   class="allocation-btn">
+
+                    Apply for Room
+
+                </a>
+
+
+                <!-- My Allocation -->
+
+                <a href="MyAllocationServlet?studentId=STU001"
+                   class="dashboard-btn">
+
+                    My Allocation
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</body>
+
+</html>

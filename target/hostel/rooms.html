@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Available Rooms | HostelHub</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #222;
+        }
+
+        /* Navbar */
+        nav {
+            height: 70px;
+            background-color: #1e3a5f;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px;
+            color: white;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #4fc3f7;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            color: #4fc3f7;
+        }
+
+        /* Page heading */
+        .header {
+            text-align: center;
+            padding: 45px 20px 25px;
+        }
+
+        .header h1 {
+            color: #1e3a5f;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        /* Room table */
+        .room-container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 20px auto 60px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #1e3a5f;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f5f9fd;
+        }
+
+        .available {
+            color: green;
+            font-weight: bold;
+        }
+
+        .full {
+            color: red;
+            font-weight: bold;
+        }
+
+        .apply-btn {
+            background-color: #2196f3;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+        }
+
+        .apply-btn:hover {
+            background-color: #1769aa;
+        }
+
+        .disabled-btn {
+            background-color: #aaa;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+        }
+
+        footer {
+            background-color: #102a43;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+
+        <div class="logo">
+            Hostel<span>Hub</span>
+        </div>
+
+        <ul>
+            <li><a href="homepage.html">Home</a></li>
+            <li><a href="rooms.html">Rooms</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+
+    </nav>
+
+
+    <!-- Heading -->
+    <div class="header">
+
+        <h1>Available Hostel Rooms</h1>
+
+        <p>
+            Check room availability and apply for your preferred room.
+        </p>
+
+    </div>
+
+
+    <!-- Room Table -->
+    <div class="room-container">
+
+        <table>
+
+            <tr>
+                <th>Room No.</th>
+                <th>Block</th>
+                <th>Floor</th>
+                <th>Room Type</th>
+                <th>Capacity</th>
+                <th>Available Beds</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+
+            <tr>
+                <td>101</td>
+                <td>A</td>
+                <td>1</td>
+                <td>4 Sharing</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="available">Available</td>
+                <td>
+                    <a href="allocation.html" class="apply-btn">
+                        Apply
+                    </a>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>102</td>
+                <td>A</td>
+                <td>1</td>
+                <td>4 Sharing</td>
+                <td>4</td>
+                <td>0</td>
+                <td class="full">Full</td>
+                <td>
+                    <span class="disabled-btn">
+                        Full
+                    </span>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>201</td>
+                <td>B</td>
+                <td>2</td>
+                <td>3 Sharing</td>
+                <td>3</td>
+                <td>1</td>
+                <td class="available">Available</td>
+                <td>
+                    <a href="allocation.html" class="apply-btn">
+                        Apply
+                    </a>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>202</td>
+                <td>B</td>
+                <td>2</td>
+                <td>4 Sharing</td>
+                <td>4</td>
+                <td>3</td>
+                <td class="available">Available</td>
+                <td>
+                    <a href="allocation.html" class="apply-btn">
+                        Apply
+                    </a>
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>301</td>
+                <td>C</td>
+                <td>3</td>
+                <td>2 Sharing</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="full">Full</td>
+                <td>
+                    <span class="disabled-btn">
+                        Full
+                    </span>
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+
+    <footer>
+        <p>© 2026 HostelHub | Hostel Room Allocation System</p>
+    </footer>
+
+</body>
+</html>

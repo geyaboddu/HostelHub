@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | HostelHub</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #eaf6ff, #ffffff);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .register-container {
+            width: 500px;
+            background: white;
+            padding: 35px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3a5f;
+            margin-bottom: 8px;
+        }
+
+        .logo span {
+            color: #2196f3;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .field {
+            width: 50%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            margin-bottom: 17px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2196f3;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 6px;
+            background-color: #2196f3;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .register-btn:hover {
+            background-color: #1769aa;
+        }
+
+        .login {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .login a {
+            color: #2196f3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .back a {
+            text-decoration: none;
+            color: #555;
+        }
+
+        @media (max-width: 550px) {
+            .register-container {
+                width: 100%;
+                padding: 30px 20px;
+            }
+
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .field {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-container">
+
+        <div class="logo">
+            Hostel<span>Hub</span>
+        </div>
+
+        <h2>Create Account</h2>
+
+        <p class="subtitle">
+            Register to apply for hostel accommodation
+        </p>
+
+        <form action="RegisterServlet" method="post">
+
+            <div class="row">
+
+                <div class="field">
+                    <label for="firstName">First Name</label>
+                    <input
+                        type="text"
+                        id="firstName"
+                        name="firstName"
+                        placeholder="Enter first name"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="lastName">Last Name</label>
+                    <input
+                        type="text"
+                        id="lastName"
+                        name="lastName"
+                        placeholder="Enter last name"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <label for="studentId">Student ID</label>
+            <input
+                type="text"
+                id="studentId"
+                name="studentId"
+                placeholder="Enter student ID"
+                required
+            >
+
+
+            <label for="email">Email Address</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter email address"
+                required
+            >
+
+
+            <label for="phone">Phone Number</label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="Enter phone number"
+                required
+            >
+
+
+            <label for="course">Course / Branch</label>
+            <select id="course" name="course" required>
+
+                <option value="">Select Branch</option>
+                <option value="CSE">Computer Science Engineering</option>
+                <option value="IT">Information Technology</option>
+                <option value="ECE">Electronics & Communication</option>
+                <option value="EEE">Electrical & Electronics</option>
+                <option value="MECH">Mechanical Engineering</option>
+                <option value="CIVIL">Civil Engineering</option>
+
+            </select>
+
+
+            <label for="year">Year of Study</label>
+            <select id="year" name="year" required>
+
+                <option value="">Select Year</option>
+                <option value="1">1st Year</option>
+                <option value="2">2nd Year</option>
+                <option value="3">3rd Year</option>
+                <option value="4">4th Year</option>
+
+            </select>
+
+
+            <div class="row">
+
+                <div class="field">
+
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Create password"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="confirmPassword">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Confirm password"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="register-btn">
+                Create Account
+            </button>
+
+        </form>
+
+
+        <div class="login">
+            Already have an account?
+            <a href="login.html">Login</a>
+        </div>
+
+
+        <div class="back">
+            <a href="homepage.html">← Back to Home</a>
+        </div>
+
+    </div>
+
+</body>
+</html>
