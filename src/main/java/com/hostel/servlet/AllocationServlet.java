@@ -28,15 +28,25 @@ public class AllocationServlet extends HttpServlet {
 
         response.setContentType("text/html");
 
+        Connection con = null;
+
         try {
 
-            Connection con = DatabaseConnection.getConnection();
+            con = DatabaseConnection.getConnection();
 
-            // STEP 1: Check existing approved allocation
+            if (con == null) {
+                response.getWriter().println(
+                    "<h2>Database Connection Failed</h2>"
+                );
+                return;
+            }
+
+            // STEP 1: Check whether student already has
+            // Pending or Approved allocation
             String checkStudentSql =
-                    "SELECT * FROM allocations "
+                    "SELECT status FROM allocations "
                   + "WHERE student_id = ? "
-                  + "AND status = 'Approved'";
+                  + "AND status IN ('Pending', 'Approved')";
 
             PreparedStatement checkStudentPs =
                     con.prepareStatement(checkStudentSql);
@@ -48,12 +58,28 @@ public class AllocationServlet extends HttpServlet {
 
             if (studentRs.next()) {
 
+                String existingStatus =
+                        studentRs.getString("status");
+
+                studentRs.close();
+                checkStudentPs.close();
+
                 response.getWriter().println(
-                    "<h2>Allocation Already Exists</h2>"
+                    "<html><body>"
                 );
 
                 response.getWriter().println(
-                    "<p>You already have an approved room allocation.</p>"
+                    "<h2>Request Already Exists</h2>"
+                );
+
+                response.getWriter().println(
+                    "<p>You already have a "
+                    + existingStatus.toLowerCase()
+                    + " room allocation request.</p>"
+                );
+
+                response.getWriter().println(
+                    "<p>You cannot submit another request.</p>"
                 );
 
                 response.getWriter().println(
@@ -61,8 +87,10 @@ public class AllocationServlet extends HttpServlet {
                     + "Go to Dashboard</a>"
                 );
 
-                studentRs.close();
-                checkStudentPs.close();
+                response.getWriter().println(
+                    "</body></html>"
+                );
+
                 con.close();
 
                 return;
@@ -87,6 +115,10 @@ public class AllocationServlet extends HttpServlet {
 
             if (!roomRs.next()) {
 
+                roomRs.close();
+                roomPs.close();
+                con.close();
+
                 response.getWriter().println(
                     "<h2>Room Not Found</h2>"
                 );
@@ -95,16 +127,22 @@ public class AllocationServlet extends HttpServlet {
                     "<p>The selected room does not exist.</p>"
                 );
 
-                roomRs.close();
-                roomPs.close();
-                con.close();
+                response.getWriter().println(
+                    "<a href='allocation.html'>"
+                    + "Go Back</a>"
+                );
 
                 return;
             }
 
-            int capacity = roomRs.getInt("capacity");
-            int occupied = roomRs.getInt("occupied");
-            String status = roomRs.getString("status");
+            int capacity =
+                    roomRs.getInt("capacity");
+
+            int occupied =
+                    roomRs.getInt("occupied");
+
+            String status =
+                    roomRs.getString("status");
 
             roomRs.close();
             roomPs.close();
@@ -112,6 +150,8 @@ public class AllocationServlet extends HttpServlet {
             // STEP 3: Check whether room is full
             if (occupied >= capacity ||
                     "Full".equalsIgnoreCase(status)) {
+
+                con.close();
 
                 response.getWriter().println(
                     "<h2>Room Full</h2>"
@@ -126,12 +166,10 @@ public class AllocationServlet extends HttpServlet {
                     + "Choose Another Room</a>"
                 );
 
-                con.close();
-
                 return;
             }
 
-            // STEP 4: Insert request
+            // STEP 4: Insert new request
             String sql =
                     "INSERT INTO allocations "
                   + "(student_id, room_id, reason, status) "
@@ -144,7 +182,8 @@ public class AllocationServlet extends HttpServlet {
             ps.setInt(2, Integer.parseInt(roomId));
             ps.setString(3, reason);
 
-            int result = ps.executeUpdate();
+            int result =
+                    ps.executeUpdate();
 
             ps.close();
             con.close();
@@ -160,7 +199,8 @@ public class AllocationServlet extends HttpServlet {
                 );
 
                 response.getWriter().println(
-                    "<p>Your room allocation request is now pending.</p>"
+                    "<p>Your room allocation request "
+                    + "is now pending.</p>"
                 );
 
                 response.getWriter().println(
@@ -182,6 +222,14 @@ public class AllocationServlet extends HttpServlet {
         } catch (Exception e) {
 
             e.printStackTrace();
+
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
 
             response.getWriter().println(
                 "<h2>Allocation Failed</h2>"
