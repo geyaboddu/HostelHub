@@ -22,18 +22,24 @@ public class AdminRequestsServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("text/html");
+        response.setContentType("text/html;charset=UTF-8");
 
-        String sql = "SELECT allocation_id, student_id, room_id, reason, status "
-                   + "FROM allocations "
-                   + "WHERE status = 'Pending'";
+        String sql =
+            "SELECT allocation_id, student_id, room_id, reason, status " +
+            "FROM allocations " +
+            "WHERE LOWER(TRIM(status)) = 'pending' " +
+            "ORDER BY allocation_id DESC";
 
         try {
 
             Connection con = DatabaseConnection.getConnection();
 
-            PreparedStatement ps = con.prepareStatement(sql);
+            if (con == null) {
+                response.getWriter().println("<h2>Database Connection Failed</h2>");
+                return;
+            }
 
+            PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
             response.getWriter().println("<!DOCTYPE html>");
@@ -56,7 +62,6 @@ public class AdminRequestsServlet extends HttpServlet {
 
             response.getWriter().println("</head>");
             response.getWriter().println("<body>");
-
             response.getWriter().println("<div class='container'>");
 
             response.getWriter().println(
@@ -82,20 +87,11 @@ public class AdminRequestsServlet extends HttpServlet {
 
                 found = true;
 
-                int allocationId =
-                    rs.getInt("allocation_id");
-
-                String studentId =
-                    rs.getString("student_id");
-
-                int roomId =
-                    rs.getInt("room_id");
-
-                String reason =
-                    rs.getString("reason");
-
-                String status =
-                    rs.getString("status");
+                int allocationId = rs.getInt("allocation_id");
+                String studentId = rs.getString("student_id");
+                int roomId = rs.getInt("room_id");
+                String reason = rs.getString("reason");
+                String status = rs.getString("status");
 
                 response.getWriter().println("<tr>");
 
@@ -123,23 +119,17 @@ public class AdminRequestsServlet extends HttpServlet {
                     "<td>" +
 
                     "<form action='ApproveServlet' method='post' style='display:inline;'>" +
-
                     "<input type='hidden' name='allocationId' value='" +
                     allocationId + "'>" +
-
                     "<button type='submit' class='approve'>Approve</button>" +
-
                     "</form>" +
 
                     "&nbsp;" +
 
                     "<form action='RejectServlet' method='post' style='display:inline;'>" +
-
                     "<input type='hidden' name='allocationId' value='" +
                     allocationId + "'>" +
-
                     "<button type='submit' class='reject'>Reject</button>" +
-
                     "</form>" +
 
                     "</td>"
@@ -149,7 +139,6 @@ public class AdminRequestsServlet extends HttpServlet {
             }
 
             if (!found) {
-
                 response.getWriter().println(
                     "<tr><td colspan='6'>No pending requests</td></tr>"
                 );
@@ -162,7 +151,6 @@ public class AdminRequestsServlet extends HttpServlet {
             );
 
             response.getWriter().println("</div>");
-
             response.getWriter().println("</body>");
             response.getWriter().println("</html>");
 
@@ -179,7 +167,7 @@ public class AdminRequestsServlet extends HttpServlet {
             );
 
             response.getWriter().println(
-                "<p>" + e.getMessage() + "</p>"
+                "<p>Error: " + e.getMessage() + "</p>"
             );
         }
     }
