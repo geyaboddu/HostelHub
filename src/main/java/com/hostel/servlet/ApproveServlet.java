@@ -60,7 +60,11 @@ public class ApproveServlet extends HttpServlet {
                 approve.setInt(1,
                         Integer.parseInt(allocationId));
 
-                approve.executeUpdate();
+                int updated = approve.executeUpdate();
+
+                if (updated == 0) {
+                    throw new Exception("Allocation ID not found: " + allocationId);
+                }
 
                 approve.close();
 
@@ -75,7 +79,11 @@ public class ApproveServlet extends HttpServlet {
 
                 roomUpdate.setInt(1, roomId);
 
-                roomUpdate.executeUpdate();
+                int roomUpdated = roomUpdate.executeUpdate();
+
+                if (roomUpdated == 0) {
+                    throw new Exception("Room ID not found: " + roomId);
+                }
 
                 roomUpdate.close();
 
@@ -121,22 +129,16 @@ public class ApproveServlet extends HttpServlet {
 
             e.printStackTrace();
 
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
             response.setContentType("text/html");
 
+            response.getWriter().println("<h2>Approval Failed</h2>");
+
             response.getWriter().println(
-                "<h2>Approval Failed</h2>"
+                "<p><b>Error:</b> " + e.toString() + "</p>"
             );
 
             response.getWriter().println(
-                "<p>" + e.getMessage() + "</p>"
+                "<p><b>Message:</b> " + e.getMessage() + "</p>"
             );
         }
     }
