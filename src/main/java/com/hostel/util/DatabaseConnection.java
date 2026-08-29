@@ -2,13 +2,13 @@ package com.hostel.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.net.URI;
 
 public class DatabaseConnection {
 
     public static Connection getConnection() {
 
         try {
+
             String databaseUrl = System.getenv("DATABASE_URL");
 
             if (databaseUrl == null || databaseUrl.isEmpty()) {
@@ -16,36 +16,52 @@ public class DatabaseConnection {
                 return null;
             }
 
-            // Convert Render PostgreSQL URL to JDBC format
+            // Convert Render PostgreSQL URL to JDBC URL
             if (databaseUrl.startsWith("postgres://")) {
                 databaseUrl = databaseUrl.replaceFirst(
                         "postgres://",
-                        "postgresql://"
+                        "jdbc:postgresql://"
+                );
+            } 
+            else if (databaseUrl.startsWith("postgresql://")) {
+                databaseUrl = databaseUrl.replaceFirst(
+                        "postgresql://",
+                        "jdbc:postgresql://"
                 );
             }
 
-            URI uri = new URI(databaseUrl);
+            // Fix invalid/missing Render port
+            databaseUrl = databaseUrl.replace(":-1/", ":5432/");
 
-            String userInfo = uri.getUserInfo();
-            String username = userInfo.substring(0, userInfo.indexOf(":"));
-            String password = userInfo.substring(userInfo.indexOf(":") + 1);
+            // If there is no port at all, add PostgreSQL default port
+            int slashIndex = databaseUrl.indexOf("/", "jdbc:postgresql://".length());
 
-            String host = uri.getHost();
-            int port = uri.getPort();
+            if (slashIndex > 0) {
 
-            String database = uri.getPath().substring(1);
+                String hostPart = databaseUrl.substring(
+                        "jdbc:postgresql://".length(),
+                        slashIndex
+                );
 
-            String jdbcUrl = "jdbc:postgresql://" + host + ":" + port
-                    + "/" + database
-                    + "?sslmode=require";
+                if (!hostPart.contains(":")) {
+
+                    databaseUrl =
+                            databaseUrl.substring(
+                                    0,
+                                    "jdbc:postgresql://".length()
+                            )
+                            + hostPart
+                            + ":5432"
+                            + databaseUrl.substring(slashIndex);
+                }
+            }
+
+            System.out.println("JDBC URL: " +
+                    databaseUrl.replaceAll(":[^:@/]+@", ":****@"));
 
             Class.forName("org.postgresql.Driver");
 
-            Connection con = DriverManager.getConnection(
-                    jdbcUrl,
-                    username,
-                    password
-            );
+            Connection con = DriverManager.getConnection(databaseUrl);
 
             System.out.println("PostgreSQL connected successfully!");
 
