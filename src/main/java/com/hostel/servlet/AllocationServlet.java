@@ -22,9 +22,10 @@ public class AllocationServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        String studentId = request.getParameter("studentId");
-        String roomId = request.getParameter("roomId");
-        String reason = request.getParameter("reason");
+    	String studentId = request.getParameter("studentId");
+    	String roomId = request.getParameter("roomId");
+    	String bedNumber = request.getParameter("bedNumber");
+    	String reason = request.getParameter("reason");
 
         response.setContentType("text/html");
 
@@ -172,15 +173,16 @@ public class AllocationServlet extends HttpServlet {
             // STEP 4: Insert new request
             String sql =
                     "INSERT INTO allocations "
-                  + "(student_id, room_id, reason, status) "
-                  + "VALUES (?, ?, ?, 'Pending')";
+                  + "(student_id, room_id, bed_number, reason, status) "
+                  + "VALUES (?, ?, ?, ?, 'Pending')";
 
             PreparedStatement ps =
                     con.prepareStatement(sql);
 
             ps.setString(1, studentId);
             ps.setInt(2, Integer.parseInt(roomId));
-            ps.setString(3, reason);
+            ps.setInt(3, Integer.parseInt(bedNumber));
+            ps.setString(4, reason);
 
             int result =
                     ps.executeUpdate();

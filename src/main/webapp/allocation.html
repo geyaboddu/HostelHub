@@ -20,18 +20,24 @@
         }
 
         body {
+
             background: linear-gradient(to right, #eaf6ff, #ffffff);
+
             min-height: 100vh;
 
             display: flex;
+
             justify-content: center;
+
             align-items: center;
 
             padding: 30px;
         }
 
         .container {
+
             width: 500px;
+
             background: white;
 
             padding: 35px 40px;
@@ -43,9 +49,11 @@
         }
 
         .logo {
+
             text-align: center;
 
             font-size: 28px;
+
             font-weight: bold;
 
             color: #1e3a5f;
@@ -54,10 +62,12 @@
         }
 
         .logo span {
+
             color: #2196f3;
         }
 
         h2 {
+
             text-align: center;
 
             color: #333;
@@ -66,6 +76,7 @@
         }
 
         .subtitle {
+
             text-align: center;
 
             color: #777;
@@ -74,6 +85,7 @@
         }
 
         label {
+
             display: block;
 
             margin-bottom: 7px;
@@ -100,12 +112,6 @@
             font-size: 14px;
         }
 
-        textarea {
-            height: 100px;
-
-            resize: vertical;
-        }
-
         input:focus,
         select:focus,
         textarea:focus {
@@ -113,6 +119,13 @@
             outline: none;
 
             border-color: #2196f3;
+        }
+
+        textarea {
+
+            height: 100px;
+
+            resize: vertical;
         }
 
         .submit-btn {
@@ -137,22 +150,26 @@
         }
 
         .submit-btn:hover {
+
             background-color: #1769aa;
         }
 
         .back {
+
             text-align: center;
 
             margin-top: 18px;
         }
 
         .back a {
+
             text-decoration: none;
 
             color: #555;
         }
 
         .back a:hover {
+
             color: #2196f3;
         }
 
@@ -163,12 +180,12 @@
 
 <body>
 
-
     <div class="container">
 
-
         <div class="logo">
+
             Hostel<span>Hub</span>
+
         </div>
 
 
@@ -181,8 +198,6 @@
             Submit your request for hostel accommodation
         </p>
 
-
-        <!-- IMPORTANT: This form connects to AllocationServlet -->
 
         <form action="AllocationServlet" method="post">
 
@@ -202,18 +217,45 @@
             >
 
 
-            <!-- Room ID -->
+            <!-- Room Number -->
 
-            <label for="roomId">
-                Room ID
+            <label for="roomNumber">
+                Room No.
             </label>
 
             <input
-                type="number"
+                type="text"
+                id="roomNumber"
+                name="roomNumber"
+                readonly
+            >
+
+
+            <!-- Bed Number -->
+
+            <label for="bedNumber">
+                Bed Number
+            </label>
+
+            <select
+                id="bedNumber"
+                name="bedNumber"
+                required
+            >
+
+                <option value="">
+                    Select Bed
+                </option>
+
+            </select>
+
+
+            <!-- Hidden Room ID -->
+
+            <input
+                type="hidden"
                 id="roomId"
                 name="roomId"
-                placeholder="Enter Room ID"
-                required
             >
 
 
@@ -241,7 +283,6 @@
 
             </button>
 
-
         </form>
 
 
@@ -253,9 +294,71 @@
 
         </div>
 
-
     </div>
 
+
+    <!-- JavaScript -->
+
+    <script>
+
+        const params =
+            new URLSearchParams(window.location.search);
+
+
+        const roomId =
+            params.get("roomId");
+
+
+        const roomNumber =
+            params.get("roomNumber");
+
+
+        const capacity =
+            parseInt(params.get("capacity"));
+
+
+        const occupied =
+            parseInt(params.get("occupied"));
+
+
+        document.getElementById("roomId").value =
+            roomId;
+
+
+        document.getElementById("roomNumber").value =
+            roomNumber;
+
+
+        const bedSelect =
+            document.getElementById("bedNumber");
+
+
+        if (!isNaN(capacity) && !isNaN(occupied)) {
+
+            for (
+                let i = occupied + 1;
+                i <= capacity;
+                i++
+            ) {
+
+                const option =
+                    document.createElement("option");
+
+
+                option.value = i;
+
+
+                option.textContent =
+                    "Bed " + i;
+
+
+                bedSelect.appendChild(option);
+
+            }
+
+        }
+
+    </script>
 
 </body>
 
