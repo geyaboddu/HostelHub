@@ -22,34 +22,25 @@
         body {
             background: linear-gradient(to right, #eaf6ff, #ffffff);
             min-height: 100vh;
-
             display: flex;
             justify-content: center;
             align-items: center;
-
             padding: 30px;
         }
 
         .container {
             width: 500px;
             background: white;
-
             padding: 35px 40px;
-
             border-radius: 12px;
-
-            box-shadow:
-                0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .logo {
             text-align: center;
-
             font-size: 28px;
             font-weight: bold;
-
             color: #1e3a5f;
-
             margin-bottom: 8px;
         }
 
@@ -59,80 +50,55 @@
 
         h2 {
             text-align: center;
-
             color: #333;
-
             margin-bottom: 8px;
         }
 
         .subtitle {
             text-align: center;
-
             color: #777;
-
             margin-bottom: 25px;
         }
 
         label {
             display: block;
-
             margin-bottom: 7px;
-
             font-weight: bold;
-
             color: #444;
         }
 
         input,
         select,
         textarea {
-
             width: 100%;
-
             padding: 11px;
-
             margin-bottom: 18px;
-
             border: 1px solid #ccc;
-
             border-radius: 6px;
-
             font-size: 14px;
         }
 
         textarea {
             height: 100px;
-
             resize: vertical;
         }
 
         input:focus,
         select:focus,
         textarea:focus {
-
             outline: none;
-
             border-color: #2196f3;
         }
 
         .submit-btn {
-
             width: 100%;
-
             padding: 13px;
-
             border: none;
-
             border-radius: 6px;
-
             background-color: #2196f3;
-
             color: white;
-
             font-size: 16px;
-
             font-weight: bold;
-
             cursor: pointer;
         }
 
@@ -142,13 +108,11 @@
 
         .back {
             text-align: center;
-
             margin-top: 18px;
         }
 
         .back a {
             text-decoration: none;
-
             color: #555;
         }
 
@@ -160,29 +124,22 @@
 
 </head>
 
-
 <body>
 
-
     <div class="container">
-
 
         <div class="logo">
             Hostel<span>Hub</span>
         </div>
 
-
         <h2>
             Room Allocation Request
         </h2>
-
 
         <p class="subtitle">
             Submit your request for hostel accommodation
         </p>
 
-
-        <!-- IMPORTANT: This form connects to AllocationServlet -->
 
         <form action="AllocationServlet" method="post">
 
@@ -202,19 +159,63 @@
             >
 
 
-            <!-- Room ID -->
+            <!-- Room Number -->
 
             <label for="roomId">
-                Room ID
+                Room No.
             </label>
 
-            <input
-                type="number"
+            <select
                 id="roomId"
                 name="roomId"
-                placeholder="Enter Room ID"
+                required
+                onchange="loadBeds()"
+            >
+
+                <option value="">
+                    Select Room
+                </option>
+
+                <option value="1" data-capacity="2" data-occupied="2">
+                    101
+                </option>
+
+                <option value="2" data-capacity="2" data-occupied="0">
+                    102
+                </option>
+
+                <option value="3" data-capacity="3" data-occupied="0">
+                    103
+                </option>
+
+                <option value="4" data-capacity="2" data-occupied="0">
+                    201
+                </option>
+
+                <option value="5" data-capacity="3" data-occupied="0">
+                    202
+                </option>
+
+            </select>
+
+
+            <!-- Bed Number -->
+
+            <label for="bedNumber">
+                Bed Number
+            </label>
+
+            <select
+                id="bedNumber"
+                name="bedNumber"
                 required
             >
+
+                <option value="">
+                    Select Room First
+                </option>
+
+            </select>
 
 
             <!-- Reason -->
@@ -241,7 +242,6 @@
 
             </button>
 
-
         </form>
 
 
@@ -253,9 +253,98 @@
 
         </div>
 
-
     </div>
 
+
+    <script>
+
+        function loadBeds() {
+
+            const roomSelect =
+                document.getElementById("roomId");
+
+            const bedSelect =
+                document.getElementById("bedNumber");
+
+            const selectedOption =
+                roomSelect.options[roomSelect.selectedIndex];
+
+
+            // Clear old bed options
+
+            bedSelect.innerHTML = "";
+
+
+            // If no room selected
+
+            if (roomSelect.value === "") {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = "";
+
+                option.textContent =
+                    "Select Room First";
+
+                bedSelect.appendChild(option);
+
+                return;
+            }
+
+
+            const capacity =
+                parseInt(
+                    selectedOption.getAttribute("data-capacity")
+                );
+
+            const occupied =
+                parseInt(
+                    selectedOption.getAttribute("data-occupied")
+                );
+
+
+            // No beds available
+
+            if (occupied >= capacity) {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = "";
+
+                option.textContent =
+                    "No Beds Available";
+
+                bedSelect.appendChild(option);
+
+                return;
+            }
+
+
+            // Add available beds
+
+            for (
+                let i = occupied + 1;
+                i <= capacity;
+                i++
+            ) {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = i;
+
+                option.textContent =
+                    "Bed " + i;
+
+                bedSelect.appendChild(option);
+
+            }
+
+        }
+
+    </script>
 
 </body>
 

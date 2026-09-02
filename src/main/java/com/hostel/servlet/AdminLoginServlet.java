@@ -32,11 +32,9 @@ public class AdminLoginServlet extends HttpServlet {
 
         try {
 
-            Connection con =
-                    DatabaseConnection.getConnection();
+            Connection con = DatabaseConnection.getConnection();
 
-            PreparedStatement ps =
-                    con.prepareStatement(sql);
+            PreparedStatement ps = con.prepareStatement(sql);
 
             ps.setString(1, adminId);
             ps.setString(2, password);
@@ -47,15 +45,12 @@ public class AdminLoginServlet extends HttpServlet {
 
                 String name = rs.getString("name");
 
-                HttpSession session =
-                        request.getSession();
+                HttpSession session = request.getSession();
 
                 session.setAttribute("adminId", adminId);
                 session.setAttribute("adminName", name);
 
-                response.sendRedirect(
-                        "AdminDashboardServlet"
-                );
+                response.sendRedirect("AdminDashboardServlet");
 
             } else {
 
@@ -70,8 +65,7 @@ public class AdminLoginServlet extends HttpServlet {
                 );
 
                 response.getWriter().println(
-                        "<a href='admin-login.html'>" +
-                        "Try Again</a>"
+                        "<a href='admin-login.html'>Try Again</a>"
                 );
             }
 

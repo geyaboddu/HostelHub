@@ -6,9 +6,11 @@ com\hostel\servlet\ApproveServlet.class
 com\hostel\servlet\StudentDashboardServlet.class
 com\hostel\servlet\RejectServlet.class
 com\hostel\servlet\package-info.class
+com\hostel\util\AppStartupListener.class
 com\hostel\servlet\AllocationServlet.class
 com\hostel\servlet\MyAllocationServlet.class
 com\hostel\util\DatabaseTest.class
 com\hostel\servlet\AdminDashboardServlet.class
+com\hostel\util\DatabaseInitializer.class
 com\hostel\servlet\AdminLoginServlet.class
 com\hostel\servlet\LogoutServlet.class
