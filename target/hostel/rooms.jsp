@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Available Rooms | HostelHub</title>
 
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -20,6 +22,7 @@
         }
 
         /* Navbar */
+
         nav {
             height: 70px;
             background-color: #1e3a5f;
@@ -55,6 +58,7 @@
         }
 
         /* Page heading */
+
         .header {
             text-align: center;
             padding: 45px 20px 25px;
@@ -70,6 +74,7 @@
         }
 
         /* Room table */
+
         .room-container {
             width: 90%;
             max-width: 1100px;
@@ -138,12 +143,15 @@
             text-align: center;
             padding: 20px;
         }
+
     </style>
+
 </head>
 
 <body>
 
     <!-- Navigation -->
+
     <nav>
 
         <div class="logo">
@@ -151,23 +159,27 @@
         </div>
 
         <ul>
+
             <li>
                 <a href="homepage.html">Home</a>
             </li>
 
+            <!-- CHANGED -->
             <li>
-                <a href="rooms.html">Rooms</a>
+                <a href="RoomsServlet">Rooms</a>
             </li>
 
             <li>
                 <a href="login.html">Login</a>
             </li>
+
         </ul>
 
     </nav>
 
 
     <!-- Heading -->
+
     <div class="header">
 
         <h1>Available Hostel Rooms</h1>
@@ -180,164 +192,53 @@
 
 
     <!-- Room Table -->
+
     <div class="room-container">
 
         <table>
 
             <tr>
+
                 <th>Room No.</th>
+
                 <th>Block</th>
+
                 <th>Floor</th>
+
                 <th>Room Type</th>
+
                 <th>Capacity</th>
+
                 <th>Available Beds</th>
+
                 <th>Status</th>
+
                 <th>Action</th>
-            </tr>
-
-
-            <!-- ROOM 101 -->
-
-            <tr>
-
-                <td>101</td>
-                <td>A</td>
-                <td>1</td>
-                <td>2 Sharing</td>
-                <td>2</td>
-                <td>0</td>
-
-                <td class="full">
-                    Full
-                </td>
-
-                <td>
-                    <span class="disabled-btn">
-                        Full
-                    </span>
-                </td>
 
             </tr>
 
 
-            <!-- ROOM 102 -->
+            <%
+                String roomsData = (String) request.getAttribute("roomsData");
 
-            <tr>
+                if (roomsData != null && !roomsData.isEmpty()) {
 
-                <td>102</td>
-                <td>A</td>
-                <td>1</td>
-                <td>2 Sharing</td>
-                <td>2</td>
-                <td>2</td>
+                    out.print(roomsData);
 
-                <td class="available">
-                    Available
-                </td>
+                } else {
+            %>
 
-                <td>
+                <tr>
 
-                    <a
-                        href="allocation.html?roomId=2&roomNumber=102&capacity=2&occupied=0"
-                        class="apply-btn">
+                    <td colspan="8">
+                        No rooms available.
+                    </td>
 
-                        Apply
+                </tr>
 
-                    </a>
-
-                </td>
-
-            </tr>
-
-
-            <!-- ROOM 103 -->
-
-            <tr>
-
-                <td>103</td>
-                <td>A</td>
-                <td>1</td>
-                <td>3 Sharing</td>
-                <td>3</td>
-                <td>3</td>
-
-                <td class="available">
-                    Available
-                </td>
-
-                <td>
-
-                    <a
-                        href="allocation.html?roomId=3&roomNumber=103&capacity=3&occupied=0"
-                        class="apply-btn">
-
-                        Apply
-
-                    </a>
-
-                </td>
-
-            </tr>
-
-
-            <!-- ROOM 201 -->
-
-            <tr>
-
-                <td>201</td>
-                <td>B</td>
-                <td>2</td>
-                <td>4 Sharing</td>
-                <td>4</td>
-                <td>4</td>
-
-                <td class="available">
-                    Available
-                </td>
-
-                <td>
-
-                    <a
-                        href="allocation.html?roomId=4&roomNumber=201&capacity=4&occupied=0"
-                        class="apply-btn">
-
-                        Apply
-
-                    </a>
-
-                </td>
-
-            </tr>
-
-
-            <!-- ROOM 202 -->
-
-            <tr>
-
-                <td>202</td>
-                <td>B</td>
-                <td>2</td>
-                <td>5 Sharing</td>
-                <td>5</td>
-                <td>5</td>
-
-                <td class="available">
-                    Available
-                </td>
-
-                <td>
-
-                    <a
-                        href="allocation.html?roomId=5&roomNumber=202&capacity=5&occupied=0"
-                        class="apply-btn">
-
-                        Apply
-
-                    </a>
-
-                </td>
-
-            </tr>
+            <%
+                }
+            %>
 
         </table>
 
@@ -349,7 +250,7 @@
     <footer>
 
         <p>
-            © 2026 HostelHub | Hostel Room Allocation System
+            &copy; 2026 HostelHub | Hostel Room Allocation System
         </p>
 
     </footer>

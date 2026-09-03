@@ -3,6 +3,7 @@ com\hostel\servlet\RegisterServlet.class
 com\hostel\util\DatabaseConnection.class
 com\hostel\servlet\AdminRequestsServlet.class
 com\hostel\servlet\ApproveServlet.class
+com\hostel\servlet\RoomsServlet.class
 com\hostel\servlet\StudentDashboardServlet.class
 com\hostel\servlet\RejectServlet.class
 com\hostel\servlet\package-info.class
