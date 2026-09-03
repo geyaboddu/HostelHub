@@ -182,164 +182,28 @@
     <!-- Room Table -->
     <div class="room-container">
 
-        <table>
+    <table>
 
-            <tr>
-                <th>Room No.</th>
-                <th>Block</th>
-                <th>Floor</th>
-                <th>Room Type</th>
-                <th>Capacity</th>
-                <th>Available Beds</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
+    <tr>
+        <th>Room No.</th>
+        <th>Block</th>
+        <th>Floor</th>
+        <th>Room Type</th>
+        <th>Capacity</th>
+        <th>Available Beds</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
 
+    <%
+        String roomsData = (String) request.getAttribute("roomsData");
 
-            <!-- ROOM 101 -->
+        if (roomsData != null) {
+            out.print(roomsData);
+        }
+    %>
 
-            <tr>
-
-                <td>101</td>
-                <td>A</td>
-                <td>1</td>
-                <td>2 Sharing</td>
-                <td>2</td>
-                <td>0</td>
-
-                <td class="full">
-                    Full
-                </td>
-
-                <td>
-                    <span class="disabled-btn">
-                        Full
-                    </span>
-                </td>
-
-            </tr>
-
-
-            <!-- ROOM 102 -->
-
-            <tr>
-
-                <td>102</td>
-                <td>A</td>
-                <td>1</td>
-                <td>2 Sharing</td>
-                <td>2</td>
-                <td>2</td>
-
-                <td class="available">
-                    Available
-                </td>
-
-                <td>
-
-                    <a
-                        href="allocation.html?roomId=2&roomNumber=102&capacity=2&occupied=0"
-                        class="apply-btn">
-
-                        Apply
-
-                    </a>
-
-                </td>
-
-            </tr>
-
-
-            <!-- ROOM 103 -->
-
-            <tr>
-
-                <td>103</td>
-                <td>A</td>
-                <td>1</td>
-                <td>3 Sharing</td>
-                <td>3</td>
-                <td>3</td>
-
-                <td class="available">
-                    Available
-                </td>
-
-                <td>
-
-                    <a
-                        href="allocation.html?roomId=3&roomNumber=103&capacity=3&occupied=0"
-                        class="apply-btn">
-
-                        Apply
-
-                    </a>
-
-                </td>
-
-            </tr>
-
-
-            <!-- ROOM 201 -->
-
-            <tr>
-
-                <td>201</td>
-                <td>B</td>
-                <td>2</td>
-                <td>4 Sharing</td>
-                <td>4</td>
-                <td>4</td>
-
-                <td class="available">
-                    Available
-                </td>
-
-                <td>
-
-                    <a
-                        href="allocation.html?roomId=4&roomNumber=201&capacity=4&occupied=0"
-                        class="apply-btn">
-
-                        Apply
-
-                    </a>
-
-                </td>
-
-            </tr>
-
-
-            <!-- ROOM 202 -->
-
-            <tr>
-
-                <td>202</td>
-                <td>B</td>
-                <td>2</td>
-                <td>5 Sharing</td>
-                <td>5</td>
-                <td>5</td>
-
-                <td class="available">
-                    Available
-                </td>
-
-                <td>
-
-                    <a
-                        href="allocation.html?roomId=5&roomNumber=202&capacity=5&occupied=0"
-                        class="apply-btn">
-
-                        Apply
-
-                    </a>
-
-                </td>
-
-            </tr>
-
-        </table>
+</table>
 
     </div>
 
