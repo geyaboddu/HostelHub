@@ -1,351 +1,284 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
     <title>Room Allocation | HostelHub</title>
 
     <style>
-
-        * {
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(to right, #eaf6ff, #ffffff);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
         }
 
         .container {
-            width: 500px;
+            width: 450px;
+            margin: 50px auto;
             background: white;
-            padding: 35px 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .logo {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #1e3a5f;
-            margin-bottom: 8px;
-        }
-
-        .logo span {
-            color: #2196f3;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
         }
 
         h2 {
             text-align: center;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #777;
             margin-bottom: 25px;
         }
 
         label {
             display: block;
-            margin-bottom: 7px;
+            margin-top: 15px;
             font-weight: bold;
-            color: #444;
         }
 
-        input,
-        select,
-        textarea {
+        input, select, textarea {
             width: 100%;
-            padding: 11px;
-            margin-bottom: 18px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
+            padding: 10px;
+            margin-top: 6px;
+            box-sizing: border-box;
         }
 
         textarea {
-            height: 100px;
-            resize: vertical;
+            height: 80px;
+            resize: none;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #2196f3;
-        }
-
-        .submit-btn {
+        button {
             width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 6px;
-            background-color: #2196f3;
+            padding: 12px;
+            margin-top: 25px;
+            background: #007bff;
             color: white;
-            font-size: 16px;
-            font-weight: bold;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
 
-        .submit-btn:hover {
-            background-color: #1769aa;
+        button:hover {
+            background: #0056b3;
         }
 
-        .back {
-            text-align: center;
-            margin-top: 18px;
+        #selectedRoom {
+            display: none;
+            padding: 10px;
+            margin-top: 6px;
+            background: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
-
-        .back a {
-            text-decoration: none;
-            color: #555;
-        }
-
-        .back a:hover {
-            color: #2196f3;
-        }
-
     </style>
-
 </head>
 
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <div class="logo">
-            Hostel<span>Hub</span>
-        </div>
+    <h2>Room Allocation Request</h2>
 
-        <h2>
-            Room Allocation Request
-        </h2>
+    <form action="AllocationServlet" method="post">
 
-        <p class="subtitle">
-            Submit your request for hostel accommodation
-        </p>
+        <label>Student ID</label>
+        <input type="text" name="studentId" required>
 
+        <!-- Room dropdown for Dashboard flow -->
+        <div id="roomSelection">
 
-        <form action="AllocationServlet" method="post">
+            <label>Select Room</label>
 
+            <select id="roomId" name="roomId" onchange="loadBeds()" required>
 
-            <!-- Student ID -->
+                <option value="">Select Room</option>
 
-            <label for="studentId">
-                Student ID
-            </label>
-
-            <input
-                type="text"
-                id="studentId"
-                name="studentId"
-                placeholder="Enter your Student ID"
-                required
-            >
-
-
-            <!-- Room Number -->
-
-            <label for="roomId">
-                Room No.
-            </label>
-
-            <select
-                id="roomId"
-                name="roomId"
-                required
-                onchange="loadBeds()"
-            >
-
-                <option value="">
-                    Select Room
-                </option>
-
-                <option value="1" data-capacity="2" data-occupied="2">
+                <option value="1"
+                        data-room="101"
+                        data-capacity="2"
+                        data-occupied="2">
                     101
                 </option>
 
-                <option value="2" data-capacity="2" data-occupied="0">
+                <option value="2"
+                        data-room="102"
+                        data-capacity="2"
+                        data-occupied="0">
                     102
                 </option>
 
-                <option value="3" data-capacity="3" data-occupied="0">
+                <option value="3"
+                        data-room="103"
+                        data-capacity="3"
+                        data-occupied="0">
                     103
                 </option>
 
-                <option value="4" data-capacity="2" data-occupied="0">
+                <option value="4"
+                        data-room="201"
+                        data-capacity="4"
+                        data-occupied="0">
                     201
                 </option>
 
-                <option value="5" data-capacity="3" data-occupied="0">
+                <option value="5"
+                        data-room="202"
+                        data-capacity="5"
+                        data-occupied="0">
                     202
                 </option>
 
             </select>
 
-
-            <!-- Bed Number -->
-
-            <label for="bedNumber">
-                Bed Number
-            </label>
-
-            <select
-                id="bedNumber"
-                name="bedNumber"
-                required
-            >
-
-                <option value="">
-                    Select Room First
-                </option>
-
-            </select>
-
-
-            <!-- Reason -->
-
-            <label for="reason">
-                Reason for Hostel Accommodation
-            </label>
-
-            <textarea
-                id="reason"
-                name="reason"
-                placeholder="Enter reason for requesting hostel accommodation"
-                required
-            ></textarea>
-
-
-            <!-- Submit -->
-
-            <button
-                type="submit"
-                class="submit-btn">
-
-                Submit Request
-
-            </button>
-
-        </form>
-
-
-        <div class="back">
-
-            <a href="student-dashboard.html">
-                ← Back to Dashboard
-            </a>
-
         </div>
 
-    </div>
+        <!-- Automatically selected room -->
+        <div id="selectedRoom"></div>
+
+        <!-- Hidden room ID sent to servlet -->
+        <input type="hidden" id="hiddenRoomId" name="roomId">
+
+        <label>Select Bed</label>
+
+        <select id="bedNumber" name="bedNumber" required>
+
+            <option value="">Select Bed</option>
+
+        </select>
+
+        <label>Reason</label>
+
+        <textarea name="reason"
+                  placeholder="Enter reason for room allocation"
+                  required></textarea>
+
+        <button type="submit">
+            Submit Request
+        </button>
+
+    </form>
+
+</div>
 
 
-    <script>
+<script>
 
-        function loadBeds() {
+window.onload = function () {
 
-            const roomSelect =
-                document.getElementById("roomId");
+    const params = new URLSearchParams(window.location.search);
 
-            const bedSelect =
-                document.getElementById("bedNumber");
+    const roomId = params.get("roomId");
+    const roomNumber = params.get("roomNumber");
+    const capacity = params.get("capacity");
+    const occupied = params.get("occupied");
 
-            const selectedOption =
-                roomSelect.options[roomSelect.selectedIndex];
+    /*
+     * If user came from Available Rooms page
+     */
+    if (roomId) {
 
+        // Hide room dropdown
+        document.getElementById("roomSelection").style.display = "none";
 
-            // Clear old bed options
+        // Show selected room
+        const selectedRoom = document.getElementById("selectedRoom");
 
-            bedSelect.innerHTML = "";
+        selectedRoom.style.display = "block";
 
+        selectedRoom.innerHTML =
+            "<strong>Selected Room:</strong> " + roomNumber;
 
-            // If no room selected
+        // Send room ID to servlet
+        document.getElementById("hiddenRoomId").value = roomId;
 
-            if (roomSelect.value === "") {
+        // Load available beds
+        loadBedsFromURL(capacity, occupied);
+    }
 
-                const option =
-                    document.createElement("option");
-
-                option.value = "";
-
-                option.textContent =
-                    "Select Room First";
-
-                bedSelect.appendChild(option);
-
-                return;
-            }
-
-
-            const capacity =
-                parseInt(
-                    selectedOption.getAttribute("data-capacity")
-                );
-
-            const occupied =
-                parseInt(
-                    selectedOption.getAttribute("data-occupied")
-                );
+};
 
 
-            // No beds available
+/*
+ * Load beds when room comes from Available Rooms page
+ */
+function loadBedsFromURL(capacity, occupied) {
 
-            if (occupied >= capacity) {
+    const bedSelect = document.getElementById("bedNumber");
 
-                const option =
-                    document.createElement("option");
+    bedSelect.innerHTML =
+        '<option value="">Select Bed</option>';
 
-                option.value = "";
+    capacity = parseInt(capacity);
+    occupied = parseInt(occupied);
 
-                option.textContent =
-                    "No Beds Available";
+    if (occupied >= capacity) {
 
-                bedSelect.appendChild(option);
+        bedSelect.innerHTML =
+            '<option value="">No beds available</option>';
 
-                return;
-            }
+        return;
+    }
+
+    for (let i = occupied + 1; i <= capacity; i++) {
+
+        const option = document.createElement("option");
+
+        option.value = i;
+        option.textContent = "Bed " + i;
+
+        bedSelect.appendChild(option);
+    }
+}
 
 
-            // Add available beds
+/*
+ * Load beds when user selects room manually
+ * from Student Dashboard
+ */
+function loadBeds() {
 
-            for (
-                let i = occupied + 1;
-                i <= capacity;
-                i++
-            ) {
+    const roomSelect = document.getElementById("roomId");
 
-                const option =
-                    document.createElement("option");
+    const selected =
+        roomSelect.options[roomSelect.selectedIndex];
 
-                option.value = i;
+    const bedSelect =
+        document.getElementById("bedNumber");
 
-                option.textContent =
-                    "Bed " + i;
+    bedSelect.innerHTML =
+        '<option value="">Select Bed</option>';
 
-                bedSelect.appendChild(option);
+    if (!roomSelect.value) {
+        return;
+    }
 
-            }
+    // Keep hidden room ID synchronized
+    document.getElementById("hiddenRoomId").value =
+        roomSelect.value;
 
-        }
+    const capacity =
+        parseInt(selected.getAttribute("data-capacity"));
 
-    </script>
+    const occupied =
+        parseInt(selected.getAttribute("data-occupied"));
+
+    if (occupied >= capacity) {
+
+        bedSelect.innerHTML =
+            '<option value="">No beds available</option>';
+
+        return;
+    }
+
+    for (let i = occupied + 1; i <= capacity; i++) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = i;
+        option.textContent = "Bed " + i;
+
+        bedSelect.appendChild(option);
+    }
+}
+
+</script>
 
 </body>
-
 </html>
