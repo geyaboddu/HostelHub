@@ -22,16 +22,26 @@ public class RoomsServlet extends HttpServlet {
                          HttpServletResponse response)
             throws ServletException, IOException {
 
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
         try {
 
-            Connection con = DatabaseConnection.getConnection();
+            con = DatabaseConnection.getConnection();
+
+            if (con == null) {
+                response.setContentType("text/html");
+                response.getWriter().println("<h2>Database connection failed.</h2>");
+                return;
+            }
 
             String sql = "SELECT room_id, room_number, block, room_type, "
                        + "capacity, occupied, status "
                        + "FROM rooms ORDER BY room_id";
 
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
 
             StringBuilder roomsData = new StringBuilder();
 
@@ -49,10 +59,12 @@ public class RoomsServlet extends HttpServlet {
 
                 roomsData.append("<tr>");
 
+                // Room Number
                 roomsData.append("<td>")
                          .append(roomNumber)
                          .append("</td>");
 
+                // Block
                 roomsData.append("<td>")
                          .append(block)
                          .append("</td>");
@@ -64,19 +76,24 @@ public class RoomsServlet extends HttpServlet {
                     roomsData.append("<td>2</td>");
                 }
 
+                // Room Type
                 roomsData.append("<td>")
                          .append(roomType)
                          .append("</td>");
 
+                // Capacity
                 roomsData.append("<td>")
                          .append(capacity)
                          .append("</td>");
 
+                // Available Beds
                 roomsData.append("<td>")
                          .append(availableBeds)
                          .append("</td>");
 
-                if ("Available".equalsIgnoreCase(status)) {
+                // Status and Action
+                if ("Available".equalsIgnoreCase(status)
+                        && availableBeds > 0) {
 
                     roomsData.append("<td class='available'>")
                              .append("Available")
@@ -84,12 +101,23 @@ public class RoomsServlet extends HttpServlet {
 
                     roomsData.append("<td>");
 
-                    roomsData.append("<a class='apply-btn' href='allocation.html?")
-                             .append("roomId=").append(roomId)
-                             .append("&roomNumber=").append(roomNumber)
-                             .append("&capacity=").append(capacity)
-                             .append("&occupied=").append(occupied)
-                             .append("'>Apply</a>");
+                    roomsData.append(
+                        "<a class='apply-btn' href='allocation.html?"
+                    );
+
+                    roomsData.append("roomId=")
+                             .append(roomId);
+
+                    roomsData.append("&roomNumber=")
+                             .append(roomNumber);
+
+                    roomsData.append("&capacity=")
+                             .append(capacity);
+
+                    roomsData.append("&occupied=")
+                             .append(occupied);
+
+                    roomsData.append("'>Apply</a>");
 
                     roomsData.append("</td>");
 
@@ -99,19 +127,22 @@ public class RoomsServlet extends HttpServlet {
                              .append("Full")
                              .append("</td>");
 
-                    roomsData.append("<td>")
-                             .append("<span class='disabled-btn'>Full</span>")
-                             .append("</td>");
+                    roomsData.append("<td>");
+
+                    roomsData.append(
+                        "<span class='disabled-btn'>Full</span>"
+                    );
+
+                    roomsData.append("</td>");
                 }
 
                 roomsData.append("</tr>");
             }
 
-            request.setAttribute("roomsData", roomsData.toString());
-
-            rs.close();
-            ps.close();
-            con.close();
+            request.setAttribute(
+                "roomsData",
+                roomsData.toString()
+            );
 
             request.getRequestDispatcher("rooms.jsp")
                    .forward(request, response);
@@ -129,6 +160,29 @@ public class RoomsServlet extends HttpServlet {
             response.getWriter().println(
                 "<p>" + e.getMessage() + "</p>"
             );
+
+        } finally {
+
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+            }
+
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (Exception e) {
+            }
         }
     }
 }

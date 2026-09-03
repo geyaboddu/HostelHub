@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>HostelHub | Room Allocation System</title>
+    <title>HostelHub | Home</title>
 
     <style>
         * {
@@ -15,28 +15,23 @@
         }
 
         body {
-            background-color: #f5f7fb;
-            color: #222;
+            background-color: #f5f7fa;
+            color: #333;
         }
 
-        /* Navigation Bar */
+        /* Navbar */
         nav {
-            height: 70px;
             background-color: #1e3a5f;
+            padding: 18px 60px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0 60px;
-            color: white;
+            align-items: center;
         }
 
         .logo {
-            font-size: 25px;
+            color: white;
+            font-size: 28px;
             font-weight: bold;
-        }
-
-        .logo span {
-            color: #4fc3f7;
         }
 
         nav ul {
@@ -46,227 +41,125 @@
         }
 
         nav ul li a {
-            text-decoration: none;
             color: white;
+            text-decoration: none;
             font-size: 16px;
         }
 
         nav ul li a:hover {
-            color: #4fc3f7;
-        }
-
-        .login-btn {
-            background-color: #4fc3f7;
-            padding: 10px 20px;
-            border-radius: 5px;
-            color: #102a43 !important;
-            font-weight: bold;
+            text-decoration: underline;
         }
 
         /* Hero Section */
         .hero {
-            min-height: 500px;
+            min-height: 75vh;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 60px 100px;
-            background: linear-gradient(to right, #eaf6ff, #ffffff);
+            justify-content: center;
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(
+                rgba(30, 58, 95, 0.9),
+                rgba(30, 58, 95, 0.9)
+            );
+            color: white;
         }
 
         .hero-content {
-            width: 55%;
+            max-width: 750px;
         }
 
-        .hero-content h1 {
+        .hero h1 {
             font-size: 48px;
-            color: #1e3a5f;
             margin-bottom: 20px;
         }
 
-        .hero-content h1 span {
-            color: #2196f3;
-        }
-
-        .hero-content p {
-            font-size: 18px;
-            line-height: 1.7;
-            color: #555;
+        .hero p {
+            font-size: 19px;
+            line-height: 1.6;
             margin-bottom: 30px;
         }
 
-        .buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        .primary-btn,
-        .secondary-btn {
-            padding: 14px 25px;
+        .primary-btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background-color: white;
+            color: #1e3a5f;
             text-decoration: none;
             border-radius: 6px;
             font-weight: bold;
-        }
-
-        .primary-btn {
-            background-color: #2196f3;
-            color: white;
-        }
-
-        .secondary-btn {
-            border: 2px solid #2196f3;
-            color: #2196f3;
+            font-size: 16px;
         }
 
         .primary-btn:hover {
-            background-color: #1769aa;
-        }
-
-        .secondary-btn:hover {
-            background-color: #2196f3;
-            color: white;
-        }
-
-        /* Hero Illustration */
-        .hero-image {
-            width: 40%;
-            text-align: center;
-        }
-
-        .hostel-card {
-            background-color: white;
-            padding: 50px 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-        }
-
-        .hostel-card .icon {
-            font-size: 80px;
-            margin-bottom: 15px;
-        }
-
-        .hostel-card h2 {
-            color: #1e3a5f;
-            margin-bottom: 10px;
-        }
-
-        .hostel-card p {
-            color: #666;
+            background-color: #e8eef5;
         }
 
         /* Features */
         .features {
-            padding: 60px 80px;
+            padding: 60px 10%;
             text-align: center;
         }
 
         .features h2 {
             font-size: 32px;
-            color: #1e3a5f;
             margin-bottom: 40px;
+            color: #1e3a5f;
         }
 
         .feature-container {
             display: flex;
             justify-content: center;
             gap: 25px;
+            flex-wrap: wrap;
         }
 
         .feature-card {
             background-color: white;
-            width: 250px;
-            padding: 30px 20px;
+            width: 280px;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .feature-card .feature-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .feature-card h3 {
             color: #1e3a5f;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .feature-card p {
-            color: #666;
             line-height: 1.5;
-        }
-
-        /* Statistics */
-        .stats {
-            background-color: #1e3a5f;
-            color: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 40px 80px;
-            text-align: center;
-        }
-
-        .stat h2 {
-            font-size: 35px;
-            color: #4fc3f7;
-        }
-
-        .stat p {
-            margin-top: 8px;
+            color: #666;
         }
 
         /* Footer */
         footer {
-            background-color: #102a43;
+            background-color: #1e3a5f;
             color: white;
             text-align: center;
-            padding: 25px;
+            padding: 20px;
+            margin-top: 30px;
         }
 
-        footer p {
-            font-size: 14px;
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
-
             nav {
-                padding: 0 20px;
+                padding: 18px 20px;
+                flex-direction: column;
+                gap: 15px;
             }
 
             nav ul {
-                display: none;
-            }
-
-            .hero {
-                flex-direction: column;
-                padding: 50px 25px;
-                text-align: center;
-            }
-
-            .hero-content {
-                width: 100%;
-            }
-
-            .hero-content h1 {
-                font-size: 36px;
-            }
-
-            .buttons {
+                gap: 15px;
+                flex-wrap: wrap;
                 justify-content: center;
             }
 
-            .hero-image {
-                width: 100%;
-                margin-top: 40px;
+            .hero h1 {
+                font-size: 36px;
             }
 
-            .feature-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .stats {
-                flex-direction: column;
-                gap: 25px;
+            .hero p {
+                font-size: 16px;
             }
         }
     </style>
@@ -276,16 +169,17 @@
 
     <!-- Navigation -->
     <nav>
-        <div class="logo">
-            Hostel<span>Hub</span>
-        </div>
+        <div class="logo">HostelHub</div>
 
         <ul>
             <li><a href="homepage.html">Home</a></li>
-            <li><a href="rooms.html">Rooms</a></li>
+
+            <!-- CHANGED -->
+            <li><a href="RoomsServlet">Rooms</a></li>
+
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="login.html" class="login-btn">Login</a></li>
+            <li><a href="login.html">Login</a></li>
         </ul>
     </nav>
 
@@ -295,44 +189,18 @@
 
         <div class="hero-content">
 
-            <h1>
-                Smart & Easy
-                <span>Hostel Room Allocation</span>
-            </h1>
+            <h1>Welcome to HostelHub</h1>
 
             <p>
-                A simple and efficient platform for students to find
-                available hostel rooms and request room allocation.
-                Manage hostel rooms, students and allocations in one place.
+                A simple and convenient hostel room allocation system
+                that helps students find available rooms and submit
+                their room allocation requests easily.
             </p>
 
-            <div class="buttons">
-                <a href="rooms.html" class="primary-btn">
-                    View Available Rooms
-                </a>
-
-                <a href="login.html" class="secondary-btn">
-                    Student Login
-                </a>
-            </div>
-
-        </div>
-
-
-        <div class="hero-image">
-
-            <div class="hostel-card">
-
-                <div class="icon">🏠</div>
-
-                <h2>Find Your Room</h2>
-
-                <p>
-                    Check room availability and submit
-                    your allocation request easily.
-                </p>
-
-            </div>
+            <!-- CHANGED -->
+            <a href="RoomsServlet" class="primary-btn">
+                View Available Rooms
+            </a>
 
         </div>
 
@@ -342,91 +210,34 @@
     <!-- Features Section -->
     <section class="features">
 
-        <h2>Why Use HostelHub?</h2>
+        <h2>Why HostelHub?</h2>
 
         <div class="feature-container">
 
             <div class="feature-card">
-
-                <div class="feature-icon">🔍</div>
-
-                <h3>Check Availability</h3>
-
+                <h3>View Rooms</h3>
                 <p>
-                    View available rooms and their capacity
-                    before submitting your request.
+                    Check available hostel rooms and their current
+                    occupancy status.
                 </p>
-
             </div>
 
-
             <div class="feature-card">
-
-                <div class="feature-icon">📝</div>
-
                 <h3>Easy Allocation</h3>
-
                 <p>
-                    Submit your room allocation request
-                    through a simple online process.
+                    Students can easily submit a request for their
+                    preferred hostel room.
                 </p>
-
             </div>
-
 
             <div class="feature-card">
-
-                <div class="feature-icon">👨‍🎓</div>
-
-                <h3>Student Management</h3>
-
+                <h3>Quick Management</h3>
                 <p>
-                    Manage student information and
-                    their hostel room assignments.
+                    Hostel administrators can manage room allocation
+                    requests efficiently.
                 </p>
-
             </div>
 
-
-            <div class="feature-card">
-
-                <div class="feature-icon">📊</div>
-
-                <h3>Admin Dashboard</h3>
-
-                <p>
-                    Administrators can manage rooms,
-                    students and allocation requests.
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- Statistics -->
-    <section class="stats">
-
-        <div class="stat">
-            <h2>500+</h2>
-            <p>Students</p>
-        </div>
-
-        <div class="stat">
-            <h2>150+</h2>
-            <p>Rooms</p>
-        </div>
-
-        <div class="stat">
-            <h2>95%</h2>
-            <p>Successful Allocations</p>
-        </div>
-
-        <div class="stat">
-            <h2>24/7</h2>
-            <p>System Access</p>
         </div>
 
     </section>
@@ -434,11 +245,7 @@
 
     <!-- Footer -->
     <footer>
-
-        <p>
-            © 2026 HostelHub | Hostel Room Allocation System
-        </p>
-
+        <p>© 2026 HostelHub. All Rights Reserved.</p>
     </footer>
 
 </body>

@@ -22,28 +22,64 @@ public class AllocationServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-    	String studentId = request.getParameter("studentId");
-    	String roomId = request.getParameter("roomId");
-    	String bedNumber = request.getParameter("bedNumber");
-    	String reason = request.getParameter("reason");
+        String studentId = request.getParameter("studentId");
+        String roomId = request.getParameter("roomId");
+        String bedNumber = request.getParameter("bedNumber");
+        String reason = request.getParameter("reason");
 
-        response.setContentType("text/html");
+        response.setContentType("text/html;charset=UTF-8");
 
         Connection con = null;
 
         try {
 
-            con = DatabaseConnection.getConnection();
+            // Basic validation
+            if (studentId == null || studentId.trim().isEmpty()
+                    || roomId == null || roomId.trim().isEmpty()
+                    || bedNumber == null || bedNumber.trim().isEmpty()
+                    || reason == null || reason.trim().isEmpty()) {
 
-            if (con == null) {
                 response.getWriter().println(
-                    "<h2>Database Connection Failed</h2>"
+                    "<html><body>"
                 );
+
+                response.getWriter().println(
+                    "<h2>Invalid Request</h2>"
+                );
+
+                response.getWriter().println(
+                    "<p>Please fill all the required fields.</p>"
+                );
+
+                response.getWriter().println(
+                    "<a href='allocation.html'>Go Back</a>"
+                );
+
+                response.getWriter().println(
+                    "</body></html>"
+                );
+
                 return;
             }
 
-            // STEP 1: Check whether student already has
+            int roomIdValue = Integer.parseInt(roomId);
+            int bedNumberValue = Integer.parseInt(bedNumber);
+
+            con = DatabaseConnection.getConnection();
+
+            if (con == null) {
+
+                response.getWriter().println(
+                    "<h2>Database Connection Failed</h2>"
+                );
+
+                return;
+            }
+
+            // STEP 1:
+            // Check whether student already has
             // Pending or Approved allocation
+
             String checkStudentSql =
                     "SELECT status FROM allocations "
                   + "WHERE student_id = ? "
@@ -52,7 +88,7 @@ public class AllocationServlet extends HttpServlet {
             PreparedStatement checkStudentPs =
                     con.prepareStatement(checkStudentSql);
 
-            checkStudentPs.setString(1, studentId);
+            checkStudentPs.setString(1, studentId.trim());
 
             ResultSet studentRs =
                     checkStudentPs.executeQuery();
@@ -100,16 +136,19 @@ public class AllocationServlet extends HttpServlet {
             studentRs.close();
             checkStudentPs.close();
 
-            // STEP 2: Check room availability
+
+            // STEP 2:
+            // Check room details
+
             String roomSql =
-                    "SELECT capacity, occupied, status "
+                    "SELECT room_number, capacity, occupied, status "
                   + "FROM rooms "
                   + "WHERE room_id = ?";
 
             PreparedStatement roomPs =
                     con.prepareStatement(roomSql);
 
-            roomPs.setInt(1, Integer.parseInt(roomId));
+            roomPs.setInt(1, roomIdValue);
 
             ResultSet roomRs =
                     roomPs.executeQuery();
@@ -121,6 +160,10 @@ public class AllocationServlet extends HttpServlet {
                 con.close();
 
                 response.getWriter().println(
+                    "<html><body>"
+                );
+
+                response.getWriter().println(
                     "<h2>Room Not Found</h2>"
                 );
 
@@ -129,12 +172,18 @@ public class AllocationServlet extends HttpServlet {
                 );
 
                 response.getWriter().println(
-                    "<a href='allocation.html'>"
-                    + "Go Back</a>"
+                    "<a href='allocation.html'>Go Back</a>"
+                );
+
+                response.getWriter().println(
+                    "</body></html>"
                 );
 
                 return;
             }
+
+            String roomNumber =
+                    roomRs.getString("room_number");
 
             int capacity =
                     roomRs.getInt("capacity");
@@ -148,29 +197,132 @@ public class AllocationServlet extends HttpServlet {
             roomRs.close();
             roomPs.close();
 
-            // STEP 3: Check whether room is full
-            if (occupied >= capacity ||
-                    "Full".equalsIgnoreCase(status)) {
+
+            // STEP 3:
+            // Check whether room is full
+
+            if (occupied >= capacity
+                    || "Full".equalsIgnoreCase(status)) {
 
                 con.close();
+
+                response.getWriter().println(
+                    "<html><body>"
+                );
 
                 response.getWriter().println(
                     "<h2>Room Full</h2>"
                 );
 
                 response.getWriter().println(
-                    "<p>Sorry, this room is already full.</p>"
+                    "<p>Sorry, Room "
+                    + roomNumber
+                    + " is already full.</p>"
                 );
 
                 response.getWriter().println(
-                    "<a href='allocation.html'>"
+                    "<a href='RoomsServlet'>"
                     + "Choose Another Room</a>"
+                );
+
+                response.getWriter().println(
+                    "</body></html>"
                 );
 
                 return;
             }
 
-            // STEP 4: Insert new request
+
+            // STEP 4:
+            // Validate bed number
+
+            if (bedNumberValue <= occupied
+                    || bedNumberValue > capacity) {
+
+                con.close();
+
+                response.getWriter().println(
+                    "<html><body>"
+                );
+
+                response.getWriter().println(
+                    "<h2>Invalid Bed Number</h2>"
+                );
+
+                response.getWriter().println(
+                    "<p>Please select an available bed.</p>"
+                );
+
+                response.getWriter().println(
+                    "<a href='RoomsServlet'>"
+                    + "Back to Rooms</a>"
+                );
+
+                response.getWriter().println(
+                    "</body></html>"
+                );
+
+                return;
+            }
+
+
+            // STEP 5:
+            // Check whether selected bed is already
+            // Pending or Approved for another student
+
+            String checkBedSql =
+                    "SELECT allocation_id FROM allocations "
+                  + "WHERE room_id = ? "
+                  + "AND bed_number = ? "
+                  + "AND status IN ('Pending', 'Approved')";
+
+            PreparedStatement checkBedPs =
+                    con.prepareStatement(checkBedSql);
+
+            checkBedPs.setInt(1, roomIdValue);
+            checkBedPs.setInt(2, bedNumberValue);
+
+            ResultSet bedRs =
+                    checkBedPs.executeQuery();
+
+            if (bedRs.next()) {
+
+                bedRs.close();
+                checkBedPs.close();
+                con.close();
+
+                response.getWriter().println(
+                    "<html><body>"
+                );
+
+                response.getWriter().println(
+                    "<h2>Bed Already Requested</h2>"
+                );
+
+                response.getWriter().println(
+                    "<p>The selected bed is already "
+                    + "allocated or requested.</p>"
+                );
+
+                response.getWriter().println(
+                    "<a href='RoomsServlet'>"
+                    + "Choose Another Room</a>"
+                );
+
+                response.getWriter().println(
+                    "</body></html>"
+                );
+
+                return;
+            }
+
+            bedRs.close();
+            checkBedPs.close();
+
+
+            // STEP 6:
+            // Insert allocation request
+
             String sql =
                     "INSERT INTO allocations "
                   + "(student_id, room_id, bed_number, reason, status) "
@@ -179,16 +331,20 @@ public class AllocationServlet extends HttpServlet {
             PreparedStatement ps =
                     con.prepareStatement(sql);
 
-            ps.setString(1, studentId);
-            ps.setInt(2, Integer.parseInt(roomId));
-            ps.setInt(3, Integer.parseInt(bedNumber));
-            ps.setString(4, reason);
+            ps.setString(1, studentId.trim());
+            ps.setInt(2, roomIdValue);
+            ps.setInt(3, bedNumberValue);
+            ps.setString(4, reason.trim());
 
             int result =
                     ps.executeUpdate();
 
             ps.close();
             con.close();
+
+
+            // STEP 7:
+            // Show result
 
             if (result > 0) {
 
@@ -203,6 +359,18 @@ public class AllocationServlet extends HttpServlet {
                 response.getWriter().println(
                     "<p>Your room allocation request "
                     + "is now pending.</p>"
+                );
+
+                response.getWriter().println(
+                    "<p><strong>Room:</strong> "
+                    + roomNumber
+                    + "</p>"
+                );
+
+                response.getWriter().println(
+                    "<p><strong>Bed:</strong> "
+                    + bedNumberValue
+                    + "</p>"
                 );
 
                 response.getWriter().println(
@@ -221,11 +389,35 @@ public class AllocationServlet extends HttpServlet {
                 );
             }
 
+        } catch (NumberFormatException e) {
+
+            response.getWriter().println(
+                "<html><body>"
+            );
+
+            response.getWriter().println(
+                "<h2>Invalid Room or Bed</h2>"
+            );
+
+            response.getWriter().println(
+                "<p>Please select a valid room and bed.</p>"
+            );
+
+            response.getWriter().println(
+                "<a href='RoomsServlet'>"
+                + "Back to Rooms</a>"
+            );
+
+            response.getWriter().println(
+                "</body></html>"
+            );
+
         } catch (Exception e) {
 
             e.printStackTrace();
 
             if (con != null) {
+
                 try {
                     con.close();
                 } catch (Exception ex) {
