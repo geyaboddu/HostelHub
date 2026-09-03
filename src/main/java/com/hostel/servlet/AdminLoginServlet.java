@@ -27,7 +27,7 @@ public class AdminLoginServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         String sql =
-                "SELECT name FROM admins " +
+                "SELECT username FROM admins " +
                 "WHERE admin_id = ? AND password = ?";
 
         try {
@@ -43,7 +43,7 @@ public class AdminLoginServlet extends HttpServlet {
 
             if (rs.next()) {
 
-                String name = rs.getString("name");
+                String name = rs.getString("username");
 
                 HttpSession session = request.getSession();
 
