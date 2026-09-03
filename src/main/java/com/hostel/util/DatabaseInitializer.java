@@ -53,14 +53,14 @@ public class DatabaseInitializer {
             );
 
             // Make sure our admin account exists
-            stmt.executeUpdate(
+            String insertAdmin =
                     "INSERT INTO admins (admin_id, username, name, password) " +
                     "VALUES ('ADMIN001', 'ADMIN001', 'Hostel Administrator', 'admin123') " +
-                    "ON CONFLICT (admin_id) DO UPDATE SET " +
-                    "username = EXCLUDED.username, " +
+                    "ON CONFLICT (username) DO UPDATE SET " +
+                    "admin_id = EXCLUDED.admin_id, " +
                     "name = EXCLUDED.name, " +
-                    "password = EXCLUDED.password"
-            );
+                    "password = EXCLUDED.password";
+            stmt.executeUpdate(insertAdmin);
 
             System.out.println("Admins table initialized successfully!");
 
