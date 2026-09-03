@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>About | HostelHub</title>
+    <title>Contact | HostelHub</title>
 
     <style>
         * {
@@ -20,6 +20,7 @@
             color: #333;
         }
 
+        /* Navbar */
         nav {
             background-color: #1e3a5f;
             padding: 18px 60px;
@@ -50,36 +51,53 @@
             text-decoration: underline;
         }
 
-        .about-section {
-            min-height: 70vh;
+        /* Contact Section */
+        .contact-section {
+            min-height: 75vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 50px 20px;
         }
 
-        .about-box {
+        .contact-box {
             background-color: white;
-            max-width: 800px;
+            width: 100%;
+            max-width: 700px;
             padding: 45px;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
-        .about-box h1 {
+        .contact-box h1 {
             color: #1e3a5f;
-            margin-bottom: 25px;
             font-size: 38px;
+            margin-bottom: 20px;
         }
 
-        .about-box p {
-            line-height: 1.7;
+        .contact-box > p {
             color: #555;
             font-size: 17px;
-            margin-bottom: 18px;
+            line-height: 1.7;
+            margin-bottom: 30px;
         }
 
+        .contact-info {
+            text-align: left;
+            line-height: 2;
+        }
+
+        .contact-info p {
+            color: #555;
+            font-size: 16px;
+        }
+
+        .contact-info strong {
+            color: #1e3a5f;
+        }
+
+        /* Footer */
         footer {
             background-color: #1e3a5f;
             color: white;
@@ -87,6 +105,7 @@
             padding: 20px;
         }
 
+        /* Mobile */
         @media (max-width: 768px) {
 
             nav {
@@ -101,11 +120,11 @@
                 justify-content: center;
             }
 
-            .about-box {
+            .contact-box {
                 padding: 30px 20px;
             }
 
-            .about-box h1 {
+            .contact-box h1 {
                 font-size: 32px;
             }
         }
@@ -120,38 +139,65 @@
         <div class="logo">HostelHub</div>
 
         <ul>
-            <li><a href="homepage.html">Home</a></li>
-            <li><a href="RoomsServlet">Rooms</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="login.html">Login</a></li>
+            <li>
+                <a href="homepage.html">Home</a>
+            </li>
+
+            <li>
+                <a href="RoomsServlet">Rooms</a>
+            </li>
+
+            <li>
+                <a href="about.html">About</a>
+            </li>
+
+            <li>
+                <a href="contact.html">Contact</a>
+            </li>
+
+            <li>
+                <a href="login.html">Login</a>
+            </li>
         </ul>
 
     </nav>
 
 
-    <!-- About Section -->
-    <section class="about-section">
+    <!-- Contact Section -->
+    <section class="contact-section">
 
-        <div class="about-box">
+        <div class="contact-box">
 
-            <h1>About HostelHub</h1>
-
-            <p>
-                HostelHub is a simple and convenient hostel room
-                allocation system designed to make the room allocation
-                process easier for students and hostel administrators.
-            </p>
+            <h1>Contact Us</h1>
 
             <p>
-                Students can view available rooms, check room occupancy,
-                and submit their preferred room allocation requests.
+                If you have any questions or need assistance with
+                hostel room allocation, feel free to contact us.
             </p>
 
-            <p>
-                Hostel administrators can manage room allocation requests
-                and efficiently handle hostel room availability.
-            </p>
+            <div class="contact-info">
+
+                <p>
+                    <strong>Email:</strong>
+                    hostelhub@gmail.com
+                </p>
+
+                <p>
+                    <strong>Phone:</strong>
+                    +91 98765 43210
+                </p>
+
+                <p>
+                    <strong>Office:</strong>
+                    Hostel Administration Office
+                </p>
+
+                <p>
+                    <strong>Working Hours:</strong>
+                    Monday - Friday, 9:00 AM - 5:00 PM
+                </p>
+
+            </div>
 
         </div>
 
