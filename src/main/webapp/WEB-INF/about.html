@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>About | HostelHub</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        nav {
+            background-color: #1e3a5f;
+            padding: 18px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .about-section {
+            min-height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        .about-box {
+            background-color: white;
+            max-width: 800px;
+            padding: 45px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .about-box h1 {
+            color: #1e3a5f;
+            margin-bottom: 25px;
+            font-size: 38px;
+        }
+
+        .about-box p {
+            line-height: 1.7;
+            color: #555;
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+
+        footer {
+            background-color: #1e3a5f;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+
+            nav {
+                padding: 18px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .about-box {
+                padding: 30px 20px;
+            }
+
+            .about-box h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+
+        <div class="logo">HostelHub</div>
+
+        <ul>
+            <li><a href="homepage.html">Home</a></li>
+            <li><a href="RoomsServlet">Rooms</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="login.html">Login</a></li>
+        </ul>
+
+    </nav>
+
+
+    <!-- About Section -->
+    <section class="about-section">
+
+        <div class="about-box">
+
+            <h1>About HostelHub</h1>
+
+            <p>
+                HostelHub is a simple and convenient hostel room
+                allocation system designed to make the room allocation
+                process easier for students and hostel administrators.
+            </p>
+
+            <p>
+                Students can view available rooms, check room occupancy,
+                and submit their preferred room allocation requests.
+            </p>
+
+            <p>
+                Hostel administrators can manage room allocation requests
+                and efficiently handle hostel room availability.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <p>&copy; 2026 HostelHub. All Rights Reserved.</p>
+
+    </footer>
+
+</body>
+
+</html>
