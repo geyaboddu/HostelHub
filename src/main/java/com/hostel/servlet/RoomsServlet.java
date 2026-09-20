@@ -29,7 +29,7 @@ public class RoomsServlet extends HttpServlet {
         try {
 
             con = DatabaseConnection.getConnection();
-
+            System.out.println("APP DATABASE: " + con.getCatalog());
             if (con == null) {
                 response.setContentType("text/html");
                 response.getWriter().println(
