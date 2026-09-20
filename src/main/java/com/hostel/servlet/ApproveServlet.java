@@ -52,8 +52,8 @@ public class ApproveServlet extends HttpServlet {
                 String approveSQL =
                         "UPDATE allocations "
                       + "SET status = 'Approved' "
-                      + "WHERE allocation_id = ?";
-
+                      + "WHERE allocation_id = ? "
+                      + "AND status = 'Pending'";
                 PreparedStatement approve =
                         con.prepareStatement(approveSQL);
 
@@ -70,24 +70,14 @@ public class ApproveServlet extends HttpServlet {
 
                 // Increase occupied count
                 String roomSQL =
-                        "UPDATE rooms r "
-                      + "SET occupied = ("
-                      + "    SELECT COUNT(*) "
-                      + "    FROM allocations a "
-                      + "    WHERE a.room_id = r.room_id "
-                      + "    AND a.status = 'Approved'"
-                      + "  ), "
+                        "UPDATE rooms "
+                      + "SET occupied = occupied + 1, "
                       + "status = CASE "
-                      + "    WHEN ("
-                      + "        SELECT COUNT(*) "
-                      + "        FROM allocations a "
-                      + "        WHERE a.room_id = r.room_id "
-                      + "        AND a.status = 'Approved'"
-                      + "    ) >= r.capacity "
-                      + "    THEN 'Full' "
-                      + "    ELSE 'Available' "
+                      + "WHEN occupied + 1 >= capacity "
+                      + "THEN 'Full' "
+                      + "ELSE 'Available' "
                       + "END "
-                      + "WHERE r.room_id = ?";
+                      + "WHERE room_id = ?";
 
                 PreparedStatement roomUpdate =
                         con.prepareStatement(roomSQL);
