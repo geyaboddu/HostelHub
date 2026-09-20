@@ -88,6 +88,9 @@ public class AdminRequestsServlet extends HttpServlet {
                 found = true;
 
                 int allocationId = rs.getInt("allocation_id");
+
+                System.out.println("APPROVE FORM allocationId = " + allocationId);
+
                 String studentId = rs.getString("student_id");
                 int roomId = rs.getInt("room_id");
                 String reason = rs.getString("reason");
