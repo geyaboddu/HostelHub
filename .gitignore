@@ -6,3 +6,4 @@ Servers/
 .metadata/
 .classpath
 .project
+/target/

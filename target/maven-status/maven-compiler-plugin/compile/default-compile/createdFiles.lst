@@ -6,6 +6,7 @@ com\hostel\servlet\ApproveServlet.class
 com\hostel\servlet\RoomsServlet.class
 com\hostel\servlet\StudentDashboardServlet.class
 com\hostel\servlet\RejectServlet.class
+com\hostel\servlet\ForgotPasswordServlet.class
 com\hostel\servlet\package-info.class
 com\hostel\util\AppStartupListener.class
 com\hostel\servlet\AllocationServlet.class

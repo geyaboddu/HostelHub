@@ -29,7 +29,7 @@ public class MyAllocationServlet extends HttpServlet {
         String sql =
                 "SELECT a.allocation_id, a.student_id, "
               + "a.room_id, a.status, "
-              + "r.room_number, r.block_name, "
+              + "r.room_number, r.block, "
               + "r.room_type, r.capacity, r.occupied "
               + "FROM allocations a "
               + "JOIN rooms r ON a.room_id = r.room_id "
@@ -114,7 +114,7 @@ public class MyAllocationServlet extends HttpServlet {
                 response.getWriter().println(
                         "<div class='row'>" +
                         "<span class='label'>Block:</span> "
-                        + rs.getString("block_name") +
+                        + rs.getString("block") +
                         "</div>"
                 );
 

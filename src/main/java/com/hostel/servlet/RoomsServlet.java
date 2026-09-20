@@ -32,13 +32,28 @@ public class RoomsServlet extends HttpServlet {
 
             if (con == null) {
                 response.setContentType("text/html");
-                response.getWriter().println("<h2>Database connection failed.</h2>");
+                response.getWriter().println(
+                    "<h2>Database connection failed.</h2>"
+                );
                 return;
             }
 
-            String sql = "SELECT room_id, room_number, block, room_type, "
-                       + "capacity, occupied, status "
-                       + "FROM rooms ORDER BY room_id";
+            String sql =
+                    "SELECT room_id, room_number, block, floor, room_type, "
+                  + "capacity, occupied, ac, status "
+                  + "FROM rooms "
+                  + "ORDER BY CASE "
+                  + "WHEN room_number LIKE 'G%' THEN 1 "
+                  + "WHEN room_number::integer BETWEEN 101 AND 199 THEN 2 "
+                  + "WHEN room_number::integer BETWEEN 201 AND 299 THEN 3 "
+                  + "ELSE 4 "
+                  + "END, "
+                  + "CASE "
+                  + "WHEN room_type = '2 Sharing' THEN 1 "
+                  + "WHEN room_type = '4 Sharing' THEN 2 "
+                  + "WHEN room_type = '5 Sharing' THEN 3 "
+                  + "END, "
+                  + "room_number";
 
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
@@ -50,9 +65,11 @@ public class RoomsServlet extends HttpServlet {
                 int roomId = rs.getInt("room_id");
                 String roomNumber = rs.getString("room_number");
                 String block = rs.getString("block");
+                String floor = rs.getString("floor");
                 String roomType = rs.getString("room_type");
                 int capacity = rs.getInt("capacity");
                 int occupied = rs.getInt("occupied");
+                boolean ac = rs.getBoolean("ac");
                 String status = rs.getString("status");
 
                 int availableBeds = capacity - occupied;
@@ -70,16 +87,25 @@ public class RoomsServlet extends HttpServlet {
                          .append("</td>");
 
                 // Floor
-                if (roomNumber.startsWith("1")) {
-                    roomsData.append("<td>1</td>");
-                } else {
-                    roomsData.append("<td>2</td>");
-                }
+                roomsData.append("<td>")
+                         .append(floor)
+                         .append("</td>");
 
                 // Room Type
                 roomsData.append("<td>")
                          .append(roomType)
                          .append("</td>");
+
+                // AC
+                roomsData.append("<td>");
+
+                if (ac) {
+                    roomsData.append("AC");
+                } else {
+                    roomsData.append("Non-AC");
+                }
+
+                roomsData.append("</td>");
 
                 // Capacity
                 roomsData.append("<td>")

@@ -28,7 +28,7 @@ public class AdminLoginServlet extends HttpServlet {
 
         String sql =
                 "SELECT username FROM admins " +
-                "WHERE admin_id = ? AND password = ?";
+                "WHERE username = ? AND password = ?";
 
         try {
 

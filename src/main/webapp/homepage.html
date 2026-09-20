@@ -7,6 +7,33 @@
     <title>HostelHub | Home</title>
 
     <style>
+    .hero-buttons {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 15px 35px;
+    background: white;
+    color: #173b67;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+    font-size: 18px;
+}
+
+.btn-register {
+    background: #173b67;
+    color: white;
+    border: 2px solid white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
         * {
             margin: 0;
             padding: 0;
@@ -172,39 +199,37 @@
         <div class="logo">HostelHub</div>
 
         <ul>
-            <li><a href="homepage.html">Home</a></li>
-
-            <!-- CHANGED -->
-            <li><a href="RoomsServlet">Rooms</a></li>
-
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="login.html">Login</a></li>
-        </ul>
+    <li><a href="homepage.html">Home</a></li>
+    <li><a href="RoomsServlet">Rooms</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="login.html">Login</a></li>
+    <li><a href="register.html">Register</a></li>
+</ul>
     </nav>
 
 
     <!-- Hero Section -->
-    <section class="hero">
+  <section class="hero">
 
-        <div class="hero-content">
+    <div class="hero-content">
 
-            <h1>Welcome to HostelHub</h1>
+        <h1>Welcome to HostelHub</h1>
 
-            <p>
-                A simple and convenient hostel room allocation system
-                that helps students find available rooms and submit
-                their room allocation requests easily.
-            </p>
+        <p>
+            A simple and convenient hostel room allocation system
+            that helps students find available rooms and submit
+            their room allocation requests easily.
+        </p>
 
-            <!-- CHANGED -->
-            <a href="RoomsServlet" class="primary-btn">
-                View Available Rooms
-            </a>
-
+        <div class="hero-buttons">
+            <a href="login.html" class="btn">Login</a>
+            <a href="register.html" class="btn btn-register">Register</a>
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
     <!-- Features Section -->

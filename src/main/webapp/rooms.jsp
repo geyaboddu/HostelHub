@@ -200,20 +200,14 @@
             <tr>
 
                 <th>Room No.</th>
-
-                <th>Block</th>
-
-                <th>Floor</th>
-
-                <th>Room Type</th>
-
-                <th>Capacity</th>
-
-                <th>Available Beds</th>
-
-                <th>Status</th>
-
-                <th>Action</th>
+<th>Block</th>
+<th>Floor</th>
+<th>Room Type</th>
+<th>AC</th>
+<th>Capacity</th>
+<th>Available Beds</th>
+<th>Status</th>
+<th>Action</th>
 
             </tr>
 
@@ -230,7 +224,7 @@
 
                 <tr>
 
-                    <td colspan="8">
+                    <td colspan="9">
                         No rooms available.
                     </td>
 

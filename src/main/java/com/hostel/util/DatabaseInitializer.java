@@ -1,6 +1,7 @@
 package com.hostel.util;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 public class DatabaseInitializer {
@@ -31,7 +32,6 @@ public class DatabaseInitializer {
 
             stmt.executeUpdate(createAdmins);
 
-            // Add username if missing
             try {
                 stmt.executeUpdate(
                     "ALTER TABLE admins " +
@@ -41,7 +41,6 @@ public class DatabaseInitializer {
                 // Ignore
             }
 
-            // Add name if missing
             try {
                 stmt.executeUpdate(
                     "ALTER TABLE admins " +
@@ -51,7 +50,6 @@ public class DatabaseInitializer {
                 // Ignore
             }
 
-            // Make sure admin account exists
             try {
                 stmt.executeUpdate(
                     "INSERT INTO admins " +
@@ -80,15 +78,19 @@ public class DatabaseInitializer {
                     "room_id SERIAL PRIMARY KEY, " +
                     "room_number VARCHAR(20) UNIQUE NOT NULL, " +
                     "block VARCHAR(100), " +
+                    "floor VARCHAR(50), " +
                     "room_type VARCHAR(100), " +
                     "capacity INT NOT NULL, " +
                     "occupied INT DEFAULT 0, " +
+                    "ac BOOLEAN DEFAULT FALSE, " +
                     "status VARCHAR(20) DEFAULT 'Available'" +
                     ")";
 
             stmt.executeUpdate(createRooms);
 
+
             // Add missing columns to existing rooms table
+
             try {
                 stmt.executeUpdate(
                     "ALTER TABLE rooms " +
@@ -102,6 +104,15 @@ public class DatabaseInitializer {
                 stmt.executeUpdate(
                     "ALTER TABLE rooms " +
                     "ADD COLUMN IF NOT EXISTS block VARCHAR(100)"
+                );
+            } catch (Exception e) {
+                // Ignore
+            }
+
+            try {
+                stmt.executeUpdate(
+                    "ALTER TABLE rooms " +
+                    "ADD COLUMN IF NOT EXISTS floor VARCHAR(50)"
                 );
             } catch (Exception e) {
                 // Ignore
@@ -137,6 +148,15 @@ public class DatabaseInitializer {
             try {
                 stmt.executeUpdate(
                     "ALTER TABLE rooms " +
+                    "ADD COLUMN IF NOT EXISTS ac BOOLEAN DEFAULT FALSE"
+                );
+            } catch (Exception e) {
+                // Ignore
+            }
+
+            try {
+                stmt.executeUpdate(
+                    "ALTER TABLE rooms " +
                     "ADD COLUMN IF NOT EXISTS status VARCHAR(20) " +
                     "DEFAULT 'Available'"
                 );
@@ -146,72 +166,118 @@ public class DatabaseInitializer {
 
 
             // =====================================================
-            // 3. INSERT / UPDATE HOSTEL ROOMS
+            // 3. HOSTEL ROOM DATA
             // =====================================================
 
-            String[] rooms = {
+            String[][] roomData = {
 
-                "INSERT INTO rooms " +
-                "(room_number, block, room_type, capacity, occupied, status) " +
-                "VALUES ('101', 'A Block', '2 Sharing', 2, 2, 'Full') " +
-                "ON CONFLICT (room_number) DO UPDATE SET " +
-                "block = EXCLUDED.block, " +
-                "room_type = EXCLUDED.room_type, " +
-                "capacity = EXCLUDED.capacity, " +
-                "occupied = EXCLUDED.occupied, " +
-                "status = EXCLUDED.status",
+                // -------------------------------------------------
+                // GROUND FLOOR
+                // -------------------------------------------------
 
-                "INSERT INTO rooms " +
-                "(room_number, block, room_type, capacity, occupied, status) " +
-                "VALUES ('102', 'A Block', '2 Sharing', 2, 2, 'Full') " +
-                "ON CONFLICT (room_number) DO UPDATE SET " +
-                "block = EXCLUDED.block, " +
-                "room_type = EXCLUDED.room_type, " +
-                "capacity = EXCLUDED.capacity, " +
-                "occupied = EXCLUDED.occupied, " +
-                "status = EXCLUDED.status",
+                {"G01", "Ground Floor", "2 Sharing", "2", "false"},
+                {"G02", "Ground Floor", "2 Sharing", "2", "false"},
+                {"G03", "Ground Floor", "2 Sharing", "2", "false"},
 
-                "INSERT INTO rooms " +
-                "(room_number, block, room_type, capacity, occupied, status) " +
-                "VALUES ('103', 'A Block', '3 Sharing', 3, 0, 'Available') " +
-                "ON CONFLICT (room_number) DO UPDATE SET " +
-                "block = EXCLUDED.block, " +
-                "room_type = EXCLUDED.room_type, " +
-                "capacity = EXCLUDED.capacity, " +
-                "occupied = EXCLUDED.occupied, " +
-                "status = EXCLUDED.status",
+                {"G04", "Ground Floor", "4 Sharing", "4", "false"},
+                {"G05", "Ground Floor", "4 Sharing", "4", "false"},
+                {"G06", "Ground Floor", "4 Sharing", "4", "false"},
+                {"G07", "Ground Floor", "4 Sharing", "4", "false"},
 
-                "INSERT INTO rooms " +
-                "(room_number, block, room_type, capacity, occupied, status) " +
-                "VALUES ('201', 'B Block', '4 Sharing', 4, 0, 'Available') " +
-                "ON CONFLICT (room_number) DO UPDATE SET " +
-                "block = EXCLUDED.block, " +
-                "room_type = EXCLUDED.room_type, " +
-                "capacity = EXCLUDED.capacity, " +
-                "occupied = EXCLUDED.occupied, " +
-                "status = EXCLUDED.status",
+                {"G08", "Ground Floor", "5 Sharing", "5", "false"},
+                {"G09", "Ground Floor", "5 Sharing", "5", "false"},
+                {"G10", "Ground Floor", "5 Sharing", "5", "false"},
 
-                "INSERT INTO rooms " +
-                "(room_number, block, room_type, capacity, occupied, status) " +
-                "VALUES ('202', 'B Block', '5 Sharing', 5, 0, 'Available') " +
-                "ON CONFLICT (room_number) DO UPDATE SET " +
-                "block = EXCLUDED.block, " +
-                "room_type = EXCLUDED.room_type, " +
-                "capacity = EXCLUDED.capacity, " +
-                "occupied = EXCLUDED.occupied, " +
-                "status = EXCLUDED.status"
+
+                // -------------------------------------------------
+                // 1ST FLOOR
+                // -------------------------------------------------
+
+                {"101", "1st Floor", "2 Sharing", "2", "false"},
+                {"102", "1st Floor", "2 Sharing", "2", "false"},
+                {"103", "1st Floor", "2 Sharing", "2", "false"},
+
+                {"104", "1st Floor", "4 Sharing", "4", "false"},
+                {"105", "1st Floor", "4 Sharing", "4", "false"},
+                {"106", "1st Floor", "4 Sharing", "4", "false"},
+                {"107", "1st Floor", "4 Sharing", "4", "false"},
+
+                {"108", "1st Floor", "5 Sharing", "5", "false"},
+                {"109", "1st Floor", "5 Sharing", "5", "false"},
+                {"110", "1st Floor", "5 Sharing", "5", "false"},
+
+
+                // -------------------------------------------------
+                // 2ND FLOOR - ALL AC
+                // -------------------------------------------------
+
+                {"201", "2nd Floor", "2 Sharing", "2", "true"},
+                {"202", "2nd Floor", "2 Sharing", "2", "true"},
+                {"203", "2nd Floor", "2 Sharing", "2", "true"},
+
+                {"204", "2nd Floor", "4 Sharing", "4", "true"},
+                {"205", "2nd Floor", "4 Sharing", "4", "true"},
+                {"206", "2nd Floor", "4 Sharing", "4", "true"},
+                {"207", "2nd Floor", "4 Sharing", "4", "true"},
+
+                {"208", "2nd Floor", "5 Sharing", "5", "true"},
+                {"209", "2nd Floor", "5 Sharing", "5", "true"},
+                {"210", "2nd Floor", "5 Sharing", "5", "true"}
             };
 
-            for (String room : rooms) {
-                try {
-                    stmt.executeUpdate(room);
-                } catch (Exception e) {
-                    System.out.println("Room setup error: "
-                            + e.getMessage());
-                }
+
+            // =====================================================
+            // 4. INSERT / UPDATE ALL 30 ROOMS
+            // =====================================================
+
+            String roomSql =
+                    "INSERT INTO rooms " +
+                    "(room_number, block, floor, room_type, capacity, " +
+                    "occupied, ac, status) " +
+                    "VALUES (?, ?, ?, ?, ?, 0, ?, 'Available') " +
+                    "ON CONFLICT (room_number) DO UPDATE SET " +
+                    "block = EXCLUDED.block, " +
+                    "floor = EXCLUDED.floor, " +
+                    "room_type = EXCLUDED.room_type, " +
+                    "capacity = EXCLUDED.capacity, " +
+                    "occupied = EXCLUDED.occupied, " +
+                    "ac = EXCLUDED.ac, " +
+                    "status = EXCLUDED.status";
+
+            PreparedStatement ps = con.prepareStatement(roomSql);
+
+            for (String[] room : roomData) {
+
+                String roomNumber = room[0];
+                String floor = room[1];
+                String roomType = room[2];
+                int capacity = Integer.parseInt(room[3]);
+                boolean ac = Boolean.parseBoolean(room[4]);
+
+                
+
+                String block = "A Block";
+
+                ps.setString(1, roomNumber);
+                ps.setString(2, block);
+                ps.setString(3, floor);
+                ps.setString(4, roomType);
+                ps.setInt(5, capacity);
+                ps.setBoolean(6, ac);
+
+                ps.executeUpdate();
             }
 
-            System.out.println("Rooms table initialized successfully!");
+            ps.close();
+
+            System.out.println(
+                "30 hostel rooms initialized successfully!"
+            );
+
+
+            // =====================================================
+            // CLOSE CONNECTION
+            // =====================================================
 
             stmt.close();
             con.close();

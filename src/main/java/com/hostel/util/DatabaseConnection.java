@@ -8,6 +8,9 @@ public class DatabaseConnection {
     public static Connection getConnection() {
 
         try {
+
+            Class.forName("org.postgresql.Driver");
+
             String host = System.getenv("PGHOST");
             String port = System.getenv("PGPORT");
             String database = System.getenv("PGDATABASE");
@@ -21,18 +24,13 @@ public class DatabaseConnection {
                 return null;
             }
 
-            Class.forName("org.postgresql.Driver");
-
             String url = "jdbc:postgresql://" + host + ":" + port
                     + "/" + database + "?sslmode=require";
 
             System.out.println("Connecting to PostgreSQL...");
 
-            Connection con = DriverManager.getConnection(
-                    url,
-                    username,
-                    password
-            );
+            Connection con =
+                    DriverManager.getConnection(url, username, password);
 
             System.out.println("PostgreSQL connected successfully!");
 
