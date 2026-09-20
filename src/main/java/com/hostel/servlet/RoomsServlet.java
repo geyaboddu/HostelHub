@@ -39,22 +39,21 @@ public class RoomsServlet extends HttpServlet {
             }
 
             String sql =
-                    "SELECT r.room_id, r.room_number, r.block, r.floor, r.room_type, "
-                  + "r.capacity, r.occupied, r.ac, r.status "
-                  + "FROM rooms r "
+                    "SELECT room_id, room_number, block, floor, room_type, "
+                  + "capacity, occupied, ac, status "
+                  + "FROM rooms "
                   + "ORDER BY CASE "
-                  + "WHEN r.room_number LIKE 'G%' THEN 1 "
-                  + "WHEN r.room_number::integer BETWEEN 101 AND 199 THEN 2 "
-                  + "WHEN r.room_number::integer BETWEEN 201 AND 299 THEN 3 "
+                  + "WHEN room_number LIKE 'G%' THEN 1 "
+                  + "WHEN room_number::integer BETWEEN 101 AND 199 THEN 2 "
+                  + "WHEN room_number::integer BETWEEN 201 AND 299 THEN 3 "
                   + "ELSE 4 "
                   + "END, "
                   + "CASE "
-                  + "WHEN r.room_type = '2 Sharing' THEN 1 "
-                  + "WHEN r.room_type = '4 Sharing' THEN 2 "
-                  + "WHEN r.room_type = '5 Sharing' THEN 3 "
+                  + "WHEN room_type = '2 Sharing' THEN 1 "
+                  + "WHEN room_type = '4 Sharing' THEN 2 "
+                  + "WHEN room_type = '5 Sharing' THEN 3 "
                   + "END, "
-                  + "r.room_number";
-
+                  + "room_number";
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
 
