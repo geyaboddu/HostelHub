@@ -239,10 +239,8 @@ public class DatabaseInitializer {
                     "block = EXCLUDED.block, " +
                     "floor = EXCLUDED.floor, " +
                     "room_type = EXCLUDED.room_type, " +
-                    "capacity = EXCLUDED.capacity, " +
-                    "occupied = EXCLUDED.occupied, " +
-                    "ac = EXCLUDED.ac, " +
-                    "status = EXCLUDED.status";
+                    "capacity = EXCLUDED.capacity, " +     
+                    "ac = EXCLUDED.ac, ";
 
             PreparedStatement ps = con.prepareStatement(roomSql);
 
