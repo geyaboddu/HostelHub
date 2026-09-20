@@ -56,11 +56,12 @@ public class DatabaseInitializer {
                     "(admin_id, username, name, password) " +
                     "VALUES " +
                     "('ADMIN001', 'ADMIN001', 'Hostel Administrator', 'admin123') " +
-                    "ON CONFLICT (username) DO UPDATE SET " +
-                    "admin_id = EXCLUDED.admin_id, " +
-                    "name = EXCLUDED.name, " +
-                    "password = EXCLUDED.password"
-                );
+                    "ON CONFLICT (room_number) DO UPDATE SET " +
+                    "block = EXCLUDED.block, " +
+                    "floor = EXCLUDED.floor, " +
+                    "room_type = EXCLUDED.room_type, " +
+                    "capacity = EXCLUDED.capacity, " +
+                    "ac = EXCLUDED.ac"               );
             } catch (Exception e) {
                 System.out.println("Admin account setup skipped: "
                         + e.getMessage());
