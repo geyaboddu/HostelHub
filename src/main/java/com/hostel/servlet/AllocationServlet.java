@@ -147,7 +147,7 @@ public class AllocationServlet extends HttpServlet {
 
             PreparedStatement roomPs =
                     con.prepareStatement(roomSql);
-
+            System.out.println("ALLOCATION DEBUG: roomIdValue = " + roomIdValue);
             roomPs.setInt(1, roomIdValue);
 
             ResultSet roomRs =
