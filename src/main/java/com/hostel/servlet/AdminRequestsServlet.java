@@ -85,7 +85,16 @@ public class AdminRequestsServlet extends HttpServlet {
             boolean found = false;
 
             while (rs.next()) {
-
+            	System.out.println(
+            		    "PENDING REQUEST FOUND: allocationId="
+            		    + rs.getInt("allocation_id")
+            		    + ", studentId="
+            		    + rs.getString("student_id")
+            		    + ", roomId="
+            		    + rs.getInt("room_id")
+            		    + ", status="
+            		    + rs.getString("status")
+            		);
                 found = true;
 
                 int allocationId = rs.getInt("allocation_id");
