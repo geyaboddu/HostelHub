@@ -74,7 +74,9 @@ public class RoomsServlet extends HttpServlet {
                         " | capacity=" + capacity);
                 boolean ac = rs.getBoolean("ac");
                 String status = rs.getString("status");
-
+                System.out.println("ROOM DEBUG: " + roomNumber +
+                        " | DB occupied = " + occupied +
+                        " | capacity = " + capacity);
                 int availableBeds = capacity - occupied;
                 System.out.println("CHECK: " + roomNumber +
                         " | capacity=" + capacity +
