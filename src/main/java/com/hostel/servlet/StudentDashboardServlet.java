@@ -25,8 +25,18 @@ public class StudentDashboardServlet extends HttpServlet {
 
         response.setContentType("text/html;charset=UTF-8");
 
+        // Prevent browser from showing cached dashboard after logout
+        response.setHeader("Cache-Control",
+                "no-cache, no-store, must-revalidate");
+
+        response.setHeader("Pragma", "no-cache");
+
+        response.setDateHeader("Expires", 0);
+
+        // Get existing session only
         HttpSession session = request.getSession(false);
 
+        // If user is not logged in, go to login page
         if (session == null ||
             session.getAttribute("studentId") == null) {
 
@@ -226,18 +236,25 @@ public class StudentDashboardServlet extends HttpServlet {
             response.getWriter().println(
                 "<div class='card'>" +
                 "<h2>Student Information</h2>" +
+
                 "<p><strong>Student ID:</strong> " +
                 studentId + "</p>" +
+
                 "<p><strong>Name:</strong> " +
                 name + "</p>" +
+
                 "<p><strong>Email:</strong> " +
                 email + "</p>" +
+
                 "<p><strong>Phone:</strong> " +
                 phone + "</p>" +
+
                 "<p><strong>Branch:</strong> " +
                 branch + "</p>" +
+
                 "<p><strong>Year:</strong> " +
                 year + "</p>" +
+
                 "</div>"
             );
 
