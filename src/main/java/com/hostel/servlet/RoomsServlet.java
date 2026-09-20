@@ -39,9 +39,20 @@ public class RoomsServlet extends HttpServlet {
             }
 
             String sql =
-                    "SELECT room_id, room_number, block, floor, room_type, "
-                  + "capacity, occupied, ac, status "
-                  + "FROM rooms "
+                    "SELECT r.room_id, r.room_number, r.block, r.floor, r.room_type, "
+                  + "r.capacity, "
+                  + "(SELECT COUNT(*) FROM allocations a "
+                  + " WHERE a.room_id = r.room_id "
+                  + " AND a.status = 'Approved') AS occupied, "
+                  + "r.ac, "
+                  + "CASE "
+                  + "WHEN (SELECT COUNT(*) FROM allocations a "
+                  + "      WHERE a.room_id = r.room_id "
+                  + "      AND a.status = 'Approved') >= r.capacity "
+                  + "THEN 'Full' "
+                  + "ELSE 'Available' "
+                  + "END AS status "
+                  + "FROM rooms r "
                   + "ORDER BY CASE "
                   + "WHEN room_number LIKE 'G%' THEN 1 "
                   + "WHEN room_number::integer BETWEEN 101 AND 199 THEN 2 "
