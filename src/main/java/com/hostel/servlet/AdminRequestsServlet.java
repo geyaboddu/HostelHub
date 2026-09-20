@@ -33,12 +33,13 @@ public class AdminRequestsServlet extends HttpServlet {
         try {
 
             Connection con = DatabaseConnection.getConnection();
-
+            System.out.println("ADMIN REQUESTS: DB CONNECTION = " + con);
             if (con == null) {
                 response.getWriter().println("<h2>Database Connection Failed</h2>");
                 return;
             }
-
+            System.out.println("ADMIN REQUESTS: Running pending request query...");
+            System.out.println("ADMIN REQUESTS SQL: " + sql);
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
