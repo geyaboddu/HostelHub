@@ -70,9 +70,24 @@ public class ApproveServlet extends HttpServlet {
 
                 // Increase occupied count
                 String roomSQL =
-                        "UPDATE rooms "
-                      + "SET occupied = occupied + 1 "
-                      + "WHERE room_id = ?";
+                        "UPDATE rooms r "
+                      + "SET occupied = ("
+                      + "    SELECT COUNT(*) "
+                      + "    FROM allocations a "
+                      + "    WHERE a.room_id = r.room_id "
+                      + "    AND a.status = 'Approved'"
+                      + "  ), "
+                      + "status = CASE "
+                      + "    WHEN ("
+                      + "        SELECT COUNT(*) "
+                      + "        FROM allocations a "
+                      + "        WHERE a.room_id = r.room_id "
+                      + "        AND a.status = 'Approved'"
+                      + "    ) >= r.capacity "
+                      + "    THEN 'Full' "
+                      + "    ELSE 'Available' "
+                      + "END "
+                      + "WHERE r.room_id = ?";
 
                 PreparedStatement roomUpdate =
                         con.prepareStatement(roomSQL);
@@ -88,22 +103,7 @@ public class ApproveServlet extends HttpServlet {
                 roomUpdate.close();
 
                 // Check whether room is full
-                String statusSQL =
-                        "UPDATE rooms "
-                      + "SET status = CASE "
-                      + "WHEN occupied >= capacity THEN 'Full' "
-                      + "ELSE 'Available' "
-                      + "END "
-                      + "WHERE room_id = ?";
-
-                PreparedStatement statusUpdate =
-                        con.prepareStatement(statusSQL);
-
-                statusUpdate.setInt(1, roomId);
-
-                statusUpdate.executeUpdate();
-
-                statusUpdate.close();
+               
 
                 response.sendRedirect("AdminRequestsServlet");
 
