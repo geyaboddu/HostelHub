@@ -76,7 +76,10 @@ public class RoomsServlet extends HttpServlet {
                 String status = rs.getString("status");
 
                 int availableBeds = capacity - occupied;
-
+                System.out.println("CHECK: " + roomNumber +
+                        " | capacity=" + capacity +
+                        " | occupied=" + occupied +
+                        " | available=" + availableBeds);
                 roomsData.append("<tr>");
 
                 // Room Number
