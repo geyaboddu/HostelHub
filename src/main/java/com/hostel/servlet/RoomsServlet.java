@@ -95,6 +95,9 @@ public class RoomsServlet extends HttpServlet {
                         " | capacity=" + capacity +
                         " | occupied=" + occupied +
                         " | available=" + availableBeds);
+                System.out.println("ROOM ID CHECK: " + roomNumber +
+                        " | roomId=" + roomId +
+                        " | occupied=" + occupied);
                 roomsData.append("<tr>");
 
                 // Room Number
