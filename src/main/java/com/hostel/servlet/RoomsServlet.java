@@ -118,8 +118,7 @@ public class RoomsServlet extends HttpServlet {
                          .append("</td>");
 
                 // Status and Action
-                if ("Available".equalsIgnoreCase(status)
-                        && availableBeds > 0) {
+                if (occupied < capacity) {
 
                     roomsData.append("<td class='available'>")
                              .append("Available")

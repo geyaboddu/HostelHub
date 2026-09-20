@@ -80,7 +80,7 @@ public class ApproveServlet extends HttpServlet {
                 roomUpdate.setInt(1, roomId);
 
                 int roomUpdated = roomUpdate.executeUpdate();
-
+                System.out.println("ROOM OCCUPIED UPDATED: roomId=" + roomId + ", rows=" + roomUpdated);
                 if (roomUpdated == 0) {
                     throw new Exception("Room ID not found: " + roomId);
                 }
