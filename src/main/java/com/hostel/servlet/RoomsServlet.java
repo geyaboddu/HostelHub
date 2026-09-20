@@ -69,6 +69,9 @@ public class RoomsServlet extends HttpServlet {
                 String roomType = rs.getString("room_type");
                 int capacity = rs.getInt("capacity");
                 int occupied = rs.getInt("occupied");
+                System.out.println("ROOM DATA: " + roomNumber +
+                        " | occupied=" + occupied +
+                        " | capacity=" + capacity);
                 boolean ac = rs.getBoolean("ac");
                 String status = rs.getString("status");
 
