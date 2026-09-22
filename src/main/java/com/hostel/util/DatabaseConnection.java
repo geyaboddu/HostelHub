@@ -11,42 +11,68 @@ public class DatabaseConnection {
 
             Class.forName("org.postgresql.Driver");
 
+            // =====================================================
+            // RENDER DATABASE
+            // =====================================================
+
             String host = System.getenv("PGHOST");
             String port = System.getenv("PGPORT");
             String database = System.getenv("PGDATABASE");
             String username = System.getenv("PGUSER");
             String password = System.getenv("PGPASSWORD");
 
-            if (host == null || port == null ||
-                database == null || username == null ||
-                password == null) {
+            String url;
 
-                System.out.println(
-                    "PostgreSQL environment variables are missing!"
-                );
+            // If Render PostgreSQL environment variables exist
+            if (host != null &&
+                port != null &&
+                database != null &&
+                username != null &&
+                password != null) {
 
-                return null;
-            }
-
-            String url =
+                url =
                     "jdbc:postgresql://" +
                     host + ":" + port +
                     "/" + database +
                     "?sslmode=require";
 
-            System.out.println(
-                    "Connecting to PostgreSQL..."
-            );
+                System.out.println(
+                    "Connecting to Render PostgreSQL..."
+                );
+
+            } else {
+
+                // =================================================
+                // LOCAL POSTGRESQL
+                // =================================================
+
+                host = "localhost";
+                port = "5432";
+                database = "hostel_db";
+                username = "postgres";
+
+                // Put your existing LOCAL PostgreSQL password here
+                password = "MyFirstProject";
+
+                url =
+                    "jdbc:postgresql://" +
+                    host + ":" + port +
+                    "/" + database;
+
+                System.out.println(
+                    "Connecting to local PostgreSQL..."
+                );
+            }
 
             Connection con =
-                    DriverManager.getConnection(
-                            url,
-                            username,
-                            password
-                    );
+                DriverManager.getConnection(
+                    url,
+                    username,
+                    password
+                );
 
             System.out.println(
-                    "PostgreSQL connected successfully!"
+                "PostgreSQL connected successfully!"
             );
 
             return con;
@@ -54,7 +80,7 @@ public class DatabaseConnection {
         } catch (Exception e) {
 
             System.out.println(
-                    "DATABASE ERROR:"
+                "DATABASE ERROR:"
             );
 
             e.printStackTrace();

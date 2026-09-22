@@ -381,10 +381,25 @@ public class StudentDashboardServlet extends HttpServlet {
                     "</a>"
                 );
 
+            } else if (
+                    latestStatus.equalsIgnoreCase("Rejected")) {
+
+                // -----------------------------------------------
+                // REJECTED
+                // -----------------------------------------------
+
+                out.println(
+                    "<p style='margin-top:20px;'>" +
+                    "<b>Room Request Rejected</b>" +
+                    "<br>" +
+                    "You cannot submit another room request." +
+                    "</p>"
+                );
+
             } else {
 
                 // -----------------------------------------------
-                // REJECTED OR NOT APPLIED
+                // NOT APPLIED
                 // -----------------------------------------------
 
                 out.println(
