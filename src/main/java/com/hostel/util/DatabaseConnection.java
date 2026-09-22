@@ -11,13 +11,32 @@ public class DatabaseConnection {
 
             Class.forName("org.postgresql.Driver");
 
+            String host = System.getenv("PGHOST");
+            String port = System.getenv("PGPORT");
+            String database = System.getenv("PGDATABASE");
+            String username = System.getenv("PGUSER");
+            String password = System.getenv("PGPASSWORD");
+
+            if (host == null || port == null ||
+                database == null || username == null ||
+                password == null) {
+
+                System.out.println(
+                    "PostgreSQL environment variables are missing!"
+                );
+
+                return null;
+            }
+
             String url =
-                    "jdbc:postgresql://localhost:5432/hostel_db";
+                    "jdbc:postgresql://" +
+                    host + ":" + port +
+                    "/" + database +
+                    "?sslmode=require";
 
-            String username = "postgres";
-            String password = "MyFirstProject";
-
-            System.out.println("Connecting to local PostgreSQL...");
+            System.out.println(
+                    "Connecting to PostgreSQL..."
+            );
 
             Connection con =
                     DriverManager.getConnection(
@@ -34,7 +53,10 @@ public class DatabaseConnection {
 
         } catch (Exception e) {
 
-            System.out.println("DATABASE ERROR:");
+            System.out.println(
+                    "DATABASE ERROR:"
+            );
+
             e.printStackTrace();
 
             return null;
