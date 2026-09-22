@@ -43,8 +43,9 @@ public class RejectServlet extends HttpServlet {
 
             if (result > 0) {
 
-                response.sendRedirect("AdminRequestsServlet");
-
+            	response.sendRedirect(
+            	        "AdminRequestsServlet?message=rejected"
+            	);
             } else {
 
                 response.setContentType("text/html");

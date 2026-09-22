@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,70 +7,87 @@
     <title>Room Allocation | HostelHub</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
         }
 
         .container {
-            width: 450px;
-            margin: 50px auto;
+            width: 100%;
+            max-width: 520px;
+            margin: 40px auto;
             background: white;
-            padding: 30px;
+            padding: 28px;
             border-radius: 10px;
-            box-shadow: 0 0 10px #ccc;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.10);
         }
 
-        h2 {
+        h1 {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 28px;
+            font-size: 26px;
         }
 
         label {
             display: block;
-            margin-top: 15px;
             font-weight: bold;
+            margin-top: 18px;
+            margin-bottom: 8px;
         }
 
-        input,
         select,
         textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #999;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
         }
 
         textarea {
             height: 80px;
-            resize: none;
+            resize: vertical;
         }
 
-        button {
+        .submit-btn {
             width: 100%;
-            padding: 12px;
-            margin-top: 25px;
-            background: #007bff;
-            color: white;
+            margin-top: 28px;
+            padding: 13px;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
+            background: #087ff5;
+            color: white;
             font-size: 16px;
+            cursor: pointer;
         }
 
-        button:hover {
-            background: #0056b3;
+        .submit-btn:hover {
+            background: #066dcc;
         }
 
-        #selectedRoom {
+        .selected-room {
             display: none;
-            padding: 10px;
-            margin-top: 6px;
-            background: #f1f1f1;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            background: #eef5ff;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 15px;
+            color: #174a8b;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 0;
+                min-height: 100vh;
+                border-radius: 0;
+                padding: 22px;
+            }
         }
     </style>
 </head>
@@ -80,300 +96,68 @@
 
 <div class="container">
 
-    <h2>Room Allocation Request</h2>
+    <h1>Room Allocation Request</h1>
 
-    <form action="./AllocationServlet" method="post">
+    <form action="AllocationServlet" method="post"
+          onsubmit="return validateForm();">
 
-        <!-- Student ID -->
-        <label for="studentId">Student ID</label>
+        <!-- FLOOR -->
 
-        <input
-            type="text"
-            id="studentId"
-            name="studentId"
-            required
-        >
+        <label for="floor">Select Floor</label>
 
-        <!-- Selected Room from Rooms page -->
-        <div id="selectedRoom"></div>
+        <select id="floor" onchange="loadRooms()">
 
-        <!-- Hidden Room ID -->
-        <input
-            type="hidden"
-            id="hiddenRoomId"
-            name="roomId"
-        >
+            <option value="">Select Floor</option>
 
-        <!-- Floor Selection -->
-        <div id="floorSelection">
+            <option value="ground">
+                Ground Floor
+            </option>
 
-            <label for="floorSelect">Select Floor</label>
+            <option value="first">
+                1st Floor
+            </option>
 
-            <select
-                id="floorSelect"
-                onchange="filterRooms()"
-            >
+            <option value="second">
+                2nd Floor
+            </option>
 
-                <option value="">Select Floor</option>
-                <option value="ground">Ground Floor</option>
-                <option value="first">1st Floor</option>
-                <option value="second">2nd Floor</option>
-
-            </select>
-
-        </div>
-
-        <!-- Room Selection -->
-        <div id="roomSelection">
-
-            <label for="roomSelect">Select Room</label>
-
-            <select
-                id="roomSelect"
-                onchange="loadBeds()"
-            >
-
-                <option value="">Select Room</option>
-
-                <!-- Ground Floor -->
-
-                <option value="166"
-                    data-floor="ground"
-                    data-capacity="2"
-                    data-occupied="0">
-                    G01
-                </option>
-
-                <option value="167"
-                    data-floor="ground"
-                    data-capacity="2"
-                    data-occupied="0">
-                    G02
-                </option>
-
-                <option value="168"
-                    data-floor="ground"
-                    data-capacity="2"
-                    data-occupied="0">
-                    G03
-                </option>
-
-                <option value="169"
-                    data-floor="ground"
-                    data-capacity="4"
-                    data-occupied="0">
-                    G04
-                </option>
-
-                <option value="170"
-                    data-floor="ground"
-                    data-capacity="4"
-                    data-occupied="0">
-                    G05
-                </option>
-
-                <option value="171"
-                    data-floor="ground"
-                    data-capacity="4"
-                    data-occupied="0">
-                    G06
-                </option>
-
-                <option value="172"
-                    data-floor="ground"
-                    data-capacity="4"
-                    data-occupied="0">
-                    G07
-                </option>
-
-                <option value="173"
-                    data-floor="ground"
-                    data-capacity="5"
-                    data-occupied="0">
-                    G08
-                </option>
-
-                <option value="174"
-                    data-floor="ground"
-                    data-capacity="5"
-                    data-occupied="0">
-                    G09
-                </option>
-
-                <option value="175"
-                    data-floor="ground"
-                    data-capacity="5"
-                    data-occupied="0">
-                    G10
-                </option>
+        </select>
 
 
-                <!-- 1st Floor -->
+        <!-- ROOM -->
 
-                <option value="1"
-                    data-floor="first"
-                    data-capacity="2"
-                    data-occupied="0">
-                    101
-                </option>
+        <label for="room">Select Room</label>
 
-                <option value="2"
-                    data-floor="first"
-                    data-capacity="2"
-                    data-occupied="0">
-                    102
-                </option>
+        <select id="room"
+                name="roomId"
+                onchange="loadBeds()">
 
-                <option value="3"
-                    data-floor="first"
-                    data-capacity="2"
-                    data-occupied="0">
-                    103
-                </option>
+            <option value="">Select Room</option>
 
-                <option value="179"
-                    data-floor="first"
-                    data-capacity="4"
-                    data-occupied="0">
-                    104
-                </option>
-
-                <option value="180"
-                    data-floor="first"
-                    data-capacity="4"
-                    data-occupied="0">
-                    105
-                </option>
-
-                <option value="181"
-                    data-floor="first"
-                    data-capacity="4"
-                    data-occupied="0">
-                    106
-                </option>
-
-                <option value="182"
-                    data-floor="first"
-                    data-capacity="4"
-                    data-occupied="0">
-                    107
-                </option>
-
-                <option value="183"
-                    data-floor="first"
-                    data-capacity="5"
-                    data-occupied="0">
-                    108
-                </option>
-
-                <option value="184"
-                    data-floor="first"
-                    data-capacity="5"
-                    data-occupied="0">
-                    109
-                </option>
-
-                <option value="185"
-                    data-floor="first"
-                    data-capacity="5"
-                    data-occupied="0">
-                    110
-                </option>
+        </select>
 
 
-                <!-- 2nd Floor -->
+        <!-- SELECTED ROOM -->
 
-                <option value="4"
-                    data-floor="second"
-                    data-capacity="2"
-                    data-occupied="0">
-                    201
-                </option>
-
-                <option value="5"
-                    data-floor="second"
-                    data-capacity="2"
-                    data-occupied="0">
-                    202
-                </option>
-
-                <option value="188"
-                    data-floor="second"
-                    data-capacity="2"
-                    data-occupied="0">
-                    203
-                </option>
-
-                <option value="189"
-                    data-floor="second"
-                    data-capacity="4"
-                    data-occupied="0">
-                    204
-                </option>
-
-                <option value="190"
-                    data-floor="second"
-                    data-capacity="4"
-                    data-occupied="0">
-                    205
-                </option>
-
-                <option value="191"
-                    data-floor="second"
-                    data-capacity="4"
-                    data-occupied="0">
-                    206
-                </option>
-
-                <option value="192"
-                    data-floor="second"
-                    data-capacity="4"
-                    data-occupied="0">
-                    207
-                </option>
-
-                <option value="193"
-                    data-floor="second"
-                    data-capacity="5"
-                    data-occupied="0">
-                    208
-                </option>
-
-                <option value="194"
-                    data-floor="second"
-                    data-capacity="5"
-                    data-occupied="0">
-                    209
-                </option>
-
-                <option value="195"
-                    data-floor="second"
-                    data-capacity="5"
-                    data-occupied="0">
-                    210
-                </option>
-
-            </select>
-
+        <div id="selectedRoom"
+             class="selected-room">
         </div>
 
 
-        <!-- Bed -->
+        <!-- BED -->
 
         <label for="bedNumber">Select Bed</label>
 
-        <select
-            id="bedNumber"
-            name="bedNumber"
-            required
-        >
+        <select id="bedNumber"
+                name="bedNumber"
+                required>
 
             <option value="">Select Bed</option>
 
         </select>
 
 
-        <!-- Reason -->
+        <!-- REASON -->
 
         <label for="reason">Reason</label>
 
@@ -381,13 +165,13 @@
             id="reason"
             name="reason"
             placeholder="Enter reason for room allocation"
-            required
-        ></textarea>
+            required></textarea>
 
 
-        <!-- Submit -->
+        <!-- SUBMIT -->
 
-        <button type="submit">
+        <button type="submit"
+                class="submit-btn">
             Submit Request
         </button>
 
@@ -398,269 +182,406 @@
 
 <script>
 
-window.onload = function () {
+    // =========================================================
+    // ROOM DATA
+    // =========================================================
 
-    const params =
-        new URLSearchParams(window.location.search);
+    const rooms = {
 
-    const roomId =
-        params.get("roomId");
+        ground: [
+            { id: 1,  number: "G01" },
+            { id: 2,  number: "G02" },
+            { id: 3,  number: "G03" },
+            { id: 4,  number: "G04" },
+            { id: 5,  number: "G05" },
+            { id: 6,  number: "G06" },
+            { id: 7,  number: "G07" },
+            { id: 8,  number: "G08" },
+            { id: 9,  number: "G09" },
+            { id: 10, number: "G10" }
+        ],
 
-    const roomNumber =
-        params.get("roomNumber");
+        first: [
+            { id: 11, number: "101" },
+            { id: 12, number: "102" },
+            { id: 13, number: "103" },
+            { id: 14, number: "104" },
+            { id: 15, number: "105" },
+            { id: 16, number: "106" },
+            { id: 17, number: "107" },
+            { id: 18, number: "108" },
+            { id: 19, number: "109" },
+            { id: 20, number: "110" }
+        ],
 
-    const capacity =
-        params.get("capacity");
+        second: [
+            { id: 21, number: "201" },
+            { id: 22, number: "202" },
+            { id: 23, number: "203" },
+            { id: 24, number: "204" },
+            { id: 25, number: "205" },
+            { id: 26, number: "206" },
+            { id: 27, number: "207" },
+            { id: 28, number: "208" },
+            { id: 29, number: "209" },
+            { id: 30, number: "210" }
+        ]
 
-    const occupied =
-        params.get("occupied");
-
-
-    /*
-     * If user came from Rooms page
-     */
-
-    if (roomId) {
-
-        document.getElementById("floorSelection")
-            .style.display = "none";
-
-        document.getElementById("roomSelection")
-            .style.display = "none";
+    };
 
 
-        document.getElementById("hiddenRoomId")
-            .value = roomId;
+    // =========================================================
+    // LOAD ROOMS
+    // =========================================================
 
+    function loadRooms() {
+
+        const floor =
+            document.getElementById("floor").value;
+
+        const room =
+            document.getElementById("room");
+
+        const bed =
+            document.getElementById("bedNumber");
 
         const selectedRoom =
             document.getElementById("selectedRoom");
 
 
-        selectedRoom.style.display = "block";
+        room.innerHTML =
+            '<option value="">Select Room</option>';
+
+        bed.innerHTML =
+            '<option value="">Select Bed</option>';
+
+        selectedRoom.style.display = "none";
 
 
-        selectedRoom.innerHTML =
-            "<strong>Selected Room:</strong> "
-            + roomNumber;
+        if (!floor) {
+            return;
+        }
 
 
-        loadBedsFromURL(
-            capacity,
-            occupied
-        );
+        rooms[floor].forEach(function(item) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = item.id;
+
+            option.textContent =
+                item.number;
+
+            option.setAttribute(
+                "data-room-number",
+                item.number
+            );
+
+            room.appendChild(option);
+
+        });
 
     }
 
-};
+
+    // =========================================================
+    // LOAD BEDS FROM DATABASE
+    // =========================================================
+
+    function loadBeds() {
+
+        const room =
+            document.getElementById("room");
+
+        const roomId =
+            room.value;
+
+        const bed =
+            document.getElementById("bedNumber");
+
+        const selectedRoom =
+            document.getElementById("selectedRoom");
 
 
-/*
- * Filter rooms according to selected floor
- */
+        bed.innerHTML =
+            '<option value="">Loading beds...</option>';
 
-function filterRooms() {
-
-    const floor =
-        document.getElementById("floorSelect").value;
-
-    const roomSelect =
-        document.getElementById("roomSelect");
-
-    const options =
-        roomSelect.querySelectorAll("option");
+        selectedRoom.style.display = "none";
 
 
-    roomSelect.value = "";
+        if (!roomId) {
 
-    document.getElementById("hiddenRoomId")
-        .value = "";
-
-
-    document.getElementById("bedNumber").innerHTML =
-        '<option value="">Select Bed</option>';
-
-
-    options.forEach(function(option) {
-
-        if (option.value === "") {
-
-            option.style.display = "block";
+            bed.innerHTML =
+                '<option value="">Select Bed</option>';
 
             return;
-
         }
 
 
-        if (
-            option.getAttribute("data-floor")
-            === floor
-        ) {
+        const selectedOption =
+            room.options[
+                room.selectedIndex
+            ];
 
-            option.style.display = "block";
+        const roomNumber =
+            selectedOption.getAttribute(
+                "data-room-number"
+            );
 
-        } else {
 
-            option.style.display = "none";
+        selectedRoom.textContent =
+            "Selected Room: " + roomNumber;
 
+        selectedRoom.style.display =
+            "block";
+
+
+        loadBedsFromDatabase(roomId);
+
+    }
+
+
+    // =========================================================
+    // GET AVAILABLE BEDS
+    // =========================================================
+
+    function loadBedsFromDatabase(roomId) {
+
+        const bedSelect =
+            document.getElementById("bedNumber");
+
+
+        bedSelect.innerHTML =
+            '<option value="">Loading beds...</option>';
+
+
+        fetch(
+            "AllocationServlet?roomId="
+            + encodeURIComponent(roomId)
+        )
+
+        .then(function(response) {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server error"
+                );
+            }
+
+            return response.json();
+
+        })
+
+        .then(function(data) {
+
+            bedSelect.innerHTML =
+                '<option value="">Select Bed</option>';
+
+
+            if (data.error) {
+
+                bedSelect.innerHTML =
+                    '<option value="">'
+                    + data.error
+                    + '</option>';
+
+                return;
+            }
+
+
+            const capacity =
+                parseInt(data.capacity);
+
+
+            const occupiedBeds =
+                data.occupiedBeds || [];
+
+
+            if (occupiedBeds.length >= capacity) {
+
+                bedSelect.innerHTML =
+                    '<option value="">No beds available</option>';
+
+                return;
+            }
+
+
+            for (
+                let i = 1;
+                i <= capacity;
+                i++
+            ) {
+
+                if (
+                    occupiedBeds.includes(i)
+                ) {
+                    continue;
+                }
+
+
+                const option =
+                    document.createElement("option");
+
+
+                option.value = i;
+
+                option.textContent =
+                    "Bed " + i;
+
+
+                bedSelect.appendChild(option);
+            }
+
+        })
+
+        .catch(function(error) {
+
+            console.error(
+                "Bed loading error:",
+                error
+            );
+
+
+            bedSelect.innerHTML =
+                '<option value="">'
+                + "Unable to load beds"
+                + '</option>';
+
+        });
+
+    }
+
+
+    // =========================================================
+    // FORM VALIDATION
+    // =========================================================
+
+    function validateForm() {
+
+        const floor =
+            document.getElementById("floor").value;
+
+        const room =
+            document.getElementById("room").value;
+
+        const bed =
+            document.getElementById("bedNumber").value;
+
+        const reason =
+            document.getElementById("reason").value.trim();
+
+
+        if (!floor) {
+
+            alert(
+                "Please select a floor."
+            );
+
+            return false;
         }
 
-    });
 
-}
+        if (!room) {
 
+            alert(
+                "Please select a room."
+            );
 
-/*
- * Load beds when room is selected
- */
-
-function loadBeds() {
-
-    const roomSelect =
-        document.getElementById("roomSelect");
-
-    const selected =
-        roomSelect.options[
-            roomSelect.selectedIndex
-        ];
+            return false;
+        }
 
 
-    const roomId =
-        roomSelect.value;
+        if (!bed) {
+
+            alert(
+                "Please select a bed."
+            );
+
+            return false;
+        }
 
 
-    const bedSelect =
-        document.getElementById("bedNumber");
+        if (!reason) {
+
+            alert(
+                "Please enter a reason."
+            );
+
+            return false;
+        }
 
 
-    bedSelect.innerHTML =
-        '<option value="">Select Bed</option>';
-
-
-    if (!roomId) {
-
-        document.getElementById("hiddenRoomId")
-            .value = "";
-
-        return;
-
+        return true;
     }
 
 
-    /*
-     * Set hidden room ID
-     */
+    // =========================================================
+    // DIRECT URL WITH ROOM ID SUPPORT
+    // Example:
+    // allocation.html?roomId=1&roomNumber=G01
+    // =========================================================
 
-    document.getElementById("hiddenRoomId")
-        .value = roomId;
+    window.onload = function() {
 
-
-    const capacity =
-        parseInt(
-            selected.getAttribute("data-capacity")
-        );
-
-
-    const occupied =
-        parseInt(
-            selected.getAttribute("data-occupied")
-        );
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
 
 
-    /*
-     * Check available beds
-     */
+        const roomId =
+            params.get("roomId");
 
-    if (occupied >= capacity) {
-
-        bedSelect.innerHTML =
-            '<option value="">No beds available</option>';
-
-        return;
-
-    }
+        const roomNumber =
+            params.get("roomNumber");
 
 
-    /*
-     * Generate available beds
-     */
+        if (roomId) {
 
-    for (
-        let i = occupied + 1;
-        i <= capacity;
-        i++
-    ) {
+            const floor =
+                document.getElementById("floor");
 
-        const option =
-            document.createElement("option");
+            const room =
+                document.getElementById("room");
 
-        option.value = i;
-
-        option.textContent =
-            "Bed " + i;
-
-        bedSelect.appendChild(option);
-
-    }
-
-}
+            const selectedRoom =
+                document.getElementById(
+                    "selectedRoom"
+                );
 
 
-/*
- * Load beds when coming from Rooms page
- */
-
-function loadBedsFromURL(
-    capacity,
-    occupied
-) {
-
-    const bedSelect =
-        document.getElementById("bedNumber");
+            // Hide floor selection
+            floor.parentElement.style.display =
+                "none";
 
 
-    bedSelect.innerHTML =
-        '<option value="">Select Bed</option>';
+            room.innerHTML =
+                '<option value="'
+                + roomId
+                + '">'
+                + (roomNumber || "Selected Room")
+                + '</option>';
 
 
-    capacity =
-        parseInt(capacity);
-
-    occupied =
-        parseInt(occupied);
+            room.value =
+                roomId;
 
 
-    if (occupied >= capacity) {
-
-        bedSelect.innerHTML =
-            '<option value="">No beds available</option>';
-
-        return;
-
-    }
+            selectedRoom.textContent =
+                "Selected Room: "
+                + (roomNumber || roomId);
 
 
-    for (
-        let i = occupied + 1;
-        i <= capacity;
-        i++
-    ) {
-
-        const option =
-            document.createElement("option");
+            selectedRoom.style.display =
+                "block";
 
 
-        option.value = i;
+            loadBedsFromDatabase(roomId);
+        }
 
-        option.textContent =
-            "Bed " + i;
-
-
-        bedSelect.appendChild(option);
-
-    }
-
-}
+    };
 
 </script>
 

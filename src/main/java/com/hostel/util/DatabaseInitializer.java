@@ -56,12 +56,11 @@ public class DatabaseInitializer {
                     "(admin_id, username, name, password) " +
                     "VALUES " +
                     "('ADMIN001', 'ADMIN001', 'Hostel Administrator', 'admin123') " +
-                    "ON CONFLICT (room_number) DO UPDATE SET " +
-                    "block = EXCLUDED.block, " +
-                    "floor = EXCLUDED.floor, " +
-                    "room_type = EXCLUDED.room_type, " +
-                    "capacity = EXCLUDED.capacity, " +
-                    "ac = EXCLUDED.ac"               );
+                    "ON CONFLICT (admin_id) DO UPDATE SET " +
+                    "username = EXCLUDED.username, " +
+                    "name = EXCLUDED.name, " +
+                    "password = EXCLUDED.password"
+                );
             } catch (Exception e) {
                 System.out.println("Admin account setup skipped: "
                         + e.getMessage());
@@ -241,7 +240,7 @@ public class DatabaseInitializer {
                     "floor = EXCLUDED.floor, " +
                     "room_type = EXCLUDED.room_type, " +
                     "capacity = EXCLUDED.capacity, " +     
-                    "ac = EXCLUDED.ac, ";
+                    "ac = EXCLUDED.ac";
 
             PreparedStatement ps = con.prepareStatement(roomSql);
 
@@ -272,8 +271,54 @@ public class DatabaseInitializer {
             System.out.println(
                 "30 hostel rooms initialized successfully!"
             );
+         // =====================================================
+         // 5. STUDENTS TABLE
+         // =====================================================
 
+         String createStudents =
+                 "CREATE TABLE IF NOT EXISTS students (" +
+                 "student_id VARCHAR(50) PRIMARY KEY, " +
+                 "name VARCHAR(100) NOT NULL, " +
+                 "email VARCHAR(100) UNIQUE NOT NULL, " +
+                 "phone VARCHAR(20), " +
+                 "branch VARCHAR(100), " +
+                 "year INT, " +
+                 "password VARCHAR(100) NOT NULL" +
+                 ")";
 
+         stmt.executeUpdate(createStudents);
+         stmt.executeUpdate(
+        		    "ALTER TABLE students " +
+        		    "ADD COLUMN IF NOT EXISTS phone VARCHAR(20)"
+        		);
+
+        		stmt.executeUpdate(
+        		    "ALTER TABLE students " +
+        		    "ADD COLUMN IF NOT EXISTS branch VARCHAR(100)"
+        		);
+
+        		stmt.executeUpdate(
+        		    "ALTER TABLE students " +
+        		    "ADD COLUMN IF NOT EXISTS year INT"
+        		);
+         System.out.println("Students table initialized successfully!");
+      // =====================================================
+      // 6. ALLOCATIONS TABLE
+      // =====================================================
+
+      String createAllocations =
+              "CREATE TABLE IF NOT EXISTS allocations (" +
+              "allocation_id SERIAL PRIMARY KEY, " +
+              "student_id VARCHAR(50) NOT NULL, " +
+              "room_id INT NOT NULL, " +
+              "bed_number INT NOT NULL, " +
+              "reason VARCHAR(500), " +
+              "status VARCHAR(20) DEFAULT 'Pending'" +
+              ")";
+
+      stmt.executeUpdate(createAllocations);
+
+      System.out.println("Allocations table initialized successfully!");
             // =====================================================
             // CLOSE CONNECTION
             // =====================================================

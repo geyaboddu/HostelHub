@@ -95,7 +95,9 @@ public class ApproveServlet extends HttpServlet {
                 // Check whether room is full
                
 
-                response.sendRedirect("AdminRequestsServlet");
+                response.sendRedirect(
+                        "AdminRequestsServlet?message=approved"
+                );
 
             } else {
 

@@ -2,14 +2,12 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Login | HostelHub</title>
 
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -18,11 +16,11 @@
         }
 
         body {
-            background: linear-gradient(to right, #eaf6ff, #ffffff);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            background: linear-gradient(to right, #eaf6ff, #ffffff);
         }
 
         .login-container {
@@ -54,7 +52,30 @@
         .subtitle {
             text-align: center;
             color: #777;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .role-buttons button {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid #2196f3;
+            border-radius: 6px;
+            background: white;
+            color: #2196f3;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .role-buttons button.active {
+            background: #2196f3;
+            color: white;
         }
 
         label {
@@ -94,12 +115,10 @@
             background-color: #1769aa;
         }
 
-        /* Forgot Password */
-
         .forgot-password {
             text-align: right;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            margin-top: -8px;
+            margin-bottom: 15px;
         }
 
         .forgot-password a {
@@ -133,9 +152,7 @@
             text-decoration: none;
             color: #555;
         }
-
     </style>
-
 </head>
 
 <body>
@@ -146,28 +163,31 @@
             Hostel<span>Hub</span>
         </div>
 
-        <h2>Student Login</h2>
+        <h2 id="loginTitle">Student Login</h2>
 
-        <p class="subtitle">
+        <p class="subtitle" id="loginSubtitle">
             Login to access your hostel account
         </p>
 
-        <!-- Connects to LoginServlet -->
+        <!-- Student / Admin selection -->
+     
 
-        <form action="LoginServlet" method="post">
+        <form id="loginForm"
+              action="LoginServlet"
+              method="post">
 
-            <label for="studentId">
+            <label id="idLabel" for="loginId">
                 Student ID
             </label>
 
             <input
-    type="text"
-    id="studentId"
-    name="studentId"
-    placeholder="Enter your Student ID"
-    autocomplete="off"
-    required
->
+                type="text"
+                id="loginId"
+                name="studentId"
+                placeholder="Enter your Student ID"
+                autocomplete="off"
+                required
+            >
 
             <label for="password">
                 Password
@@ -181,23 +201,21 @@
                 required
             >
 
-            <!-- Forgot Password -->
-
-            <div class="forgot-password">
+            <!-- Student only -->
+            <div class="forgot-password" id="forgotPassword">
                 <a href="forgot-password.html">
                     Forgot Password?
                 </a>
             </div>
 
-            <button
-                type="submit"
-                class="login-btn">
-                Login
+            <button type="submit" class="login-btn" id="loginButton">
+                Student Login
             </button>
 
         </form>
 
-        <div class="register">
+        <!-- Student only -->
+        <div class="register" id="registerSection">
 
             Don't have an account?
 
@@ -216,6 +234,9 @@
         </div>
 
     </div>
+
+
+   
 
 </body>
 

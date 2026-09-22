@@ -1,6 +1,7 @@
 package com.hostel.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,20 +26,14 @@ public class StudentDashboardServlet extends HttpServlet {
 
         response.setContentType("text/html;charset=UTF-8");
 
-        // Prevent browser from showing cached dashboard after logout
-        response.setHeader("Cache-Control",
-                "no-cache, no-store, must-revalidate");
-
-        response.setHeader("Pragma", "no-cache");
-
-        response.setDateHeader("Expires", 0);
-
-        // Get existing session only
         HttpSession session = request.getSession(false);
 
-        // If user is not logged in, go to login page
+        // =====================================================
+        // CHECK LOGIN
+        // =====================================================
+
         if (session == null ||
-            session.getAttribute("studentId") == null) {
+                session.getAttribute("studentId") == null) {
 
             response.sendRedirect("login.html");
             return;
@@ -47,261 +42,394 @@ public class StudentDashboardServlet extends HttpServlet {
         String studentId =
                 (String) session.getAttribute("studentId");
 
+        Connection con = null;
+
         try {
 
-            Connection con =
-                    DatabaseConnection.getConnection();
+            con = DatabaseConnection.getConnection();
 
-            String sql =
-                    "SELECT name, email, phone, branch, year "
-                  + "FROM students "
-                  + "WHERE student_id = ?";
-
-            PreparedStatement ps =
-                    con.prepareStatement(sql);
-
-            ps.setString(1, studentId);
-
-            ResultSet rs = ps.executeQuery();
-
-            if (!rs.next()) {
+            if (con == null) {
 
                 response.getWriter().println(
-                    "<h2>Student details not found.</h2>"
+                    "<h2>Database Connection Failed</h2>"
                 );
-
-                rs.close();
-                ps.close();
-                con.close();
 
                 return;
             }
 
-            String name = rs.getString("name");
-            String email = rs.getString("email");
-            String phone = rs.getString("phone");
-            String branch = rs.getString("branch");
-            int year = rs.getInt("year");
+            // =====================================================
+            // GET STUDENT DETAILS
+            // =====================================================
 
-            // Update session with latest details
-            session.setAttribute("studentName", name);
-            session.setAttribute("studentEmail", email);
+            String studentSql =
+                    "SELECT name, email, phone, branch, year "
+                  + "FROM students "
+                  + "WHERE student_id = ?";
 
-            response.getWriter().println(
-                "<!DOCTYPE html>"
-            );
+            PreparedStatement studentPs =
+                    con.prepareStatement(studentSql);
 
-            response.getWriter().println(
-                "<html lang='en'>"
-            );
+            studentPs.setString(1, studentId);
 
-            response.getWriter().println(
-                "<head>"
-            );
+            ResultSet studentRs =
+                    studentPs.executeQuery();
 
-            response.getWriter().println(
-                "<meta charset='UTF-8'>"
-            );
+            String name = "";
+            String email = "";
+            String phone = "";
+            String branch = "";
+            int year = 0;
 
-            response.getWriter().println(
+            if (studentRs.next()) {
+
+                name =
+                    studentRs.getString("name");
+
+                email =
+                    studentRs.getString("email");
+
+                phone =
+                    studentRs.getString("phone");
+
+                branch =
+                    studentRs.getString("branch");
+
+                year =
+                    studentRs.getInt("year");
+            }
+
+            studentRs.close();
+            studentPs.close();
+
+            // =====================================================
+            // GET LATEST ALLOCATION STATUS
+            // =====================================================
+
+            String latestSql =
+                    "SELECT status "
+                  + "FROM allocations "
+                  + "WHERE student_id = ? "
+                  + "ORDER BY allocation_id DESC "
+                  + "LIMIT 1";
+
+            PreparedStatement latestPs =
+                    con.prepareStatement(latestSql);
+
+            latestPs.setString(1, studentId);
+
+            ResultSet latestRs =
+                    latestPs.executeQuery();
+
+            String latestStatus = "Not Applied";
+
+            if (latestRs.next()) {
+
+                latestStatus =
+                    latestRs.getString("status");
+            }
+
+            latestRs.close();
+            latestPs.close();
+
+            // =====================================================
+            // HTML PAGE
+            // =====================================================
+
+            PrintWriter out =
+                    response.getWriter();
+
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+
+            out.println("<head>");
+
+            out.println("<meta charset='UTF-8'>");
+
+            out.println(
                 "<meta name='viewport' " +
                 "content='width=device-width, initial-scale=1.0'>"
             );
 
-            response.getWriter().println(
+            out.println(
                 "<title>Student Dashboard | HostelHub</title>"
             );
 
-            response.getWriter().println(
-                "<style>" +
+            out.println("<style>");
 
-                "*{box-sizing:border-box;" +
-                "font-family:Arial,sans-serif;}" +
-
-                "body{margin:0;" +
-                "background:#f4f8fc;}" +
-
-                ".navbar{" +
-                "background:#1e3a5f;" +
-                "color:white;" +
-                "padding:18px 40px;" +
-                "display:flex;" +
-                "justify-content:space-between;" +
-                "align-items:center;" +
-                "}" +
-
-                ".logo{" +
-                "font-size:26px;" +
-                "font-weight:bold;" +
-                "}" +
-
-                ".logo span{color:#2196f3;}" +
-
-                ".logout{" +
-                "background:#e53935;" +
-                "color:white;" +
-                "padding:9px 18px;" +
-                "text-decoration:none;" +
-                "border-radius:6px;" +
-                "}" +
-
-                ".container{" +
-                "width:90%;" +
-                "max-width:1100px;" +
-                "margin:40px auto;" +
-                "}" +
-
-                "h1{color:#1e3a5f;}" +
-
-                ".subtitle{" +
-                "color:#666;" +
-                "margin-bottom:30px;" +
-                "}" +
-
-                ".cards{" +
-                "display:flex;" +
-                "gap:25px;" +
-                "flex-wrap:wrap;" +
-                "}" +
-
-                ".card{" +
-                "background:white;" +
-                "padding:30px;" +
-                "border-radius:12px;" +
-                "box-shadow:0 5px 18px rgba(0,0,0,0.10);" +
-                "flex:1;" +
-                "min-width:300px;" +
-                "}" +
-
-                ".card h2{" +
-                "color:#1e3a5f;" +
-                "margin-bottom:20px;" +
-                "}" +
-
-                ".card p{" +
-                "color:#555;" +
-                "margin:14px 0;" +
-                "}" +
-
-                ".btn{" +
-                "display:block;" +
-                "padding:13px;" +
-                "margin-top:15px;" +
-                "background:#2196f3;" +
-                "color:white;" +
-                "text-decoration:none;" +
-                "text-align:center;" +
-                "border-radius:6px;" +
-                "font-weight:bold;" +
-                "}" +
-
-                ".btn:hover{" +
-                "background:#1769aa;" +
-                "}" +
-
-                "</style>"
+            out.println(
+                "body {" +
+                "font-family: Arial, sans-serif;" +
+                "background: #f4f6f8;" +
+                "margin: 0;" +
+                "padding: 0;" +
+                "}"
             );
 
-            response.getWriter().println(
-                "</head><body>"
+            out.println(
+                ".container {" +
+                "width: 500px;" +
+                "margin: 50px auto;" +
+                "background: white;" +
+                "padding: 30px;" +
+                "border-radius: 10px;" +
+                "box-shadow: 0 0 10px #ccc;" +
+                "}"
             );
 
-            // Navbar
-            response.getWriter().println(
-                "<div class='navbar'>" +
-                "<div class='logo'>Hostel<span>Hub</span></div>" +
-                "<a href='LogoutServlet' class='logout'>Logout</a>" +
-                "</div>"
+            out.println(
+                "h2 {" +
+                "text-align: center;" +
+                "color: #333;" +
+                "}"
             );
 
-            response.getWriter().println(
-                "<div class='container'>"
+            out.println(
+                ".info {" +
+                "margin-top: 20px;" +
+                "line-height: 1.8;" +
+                "}"
             );
 
-            response.getWriter().println(
-                "<h1>Student Dashboard</h1>"
+            out.println(
+                ".status {" +
+                "padding: 10px;" +
+                "margin-top: 20px;" +
+                "border-radius: 5px;" +
+                "background: #f1f1f1;" +
+                "}"
             );
 
-            response.getWriter().println(
-                "<p class='subtitle'>Welcome, " +
-                name +
-                "</p>"
+            out.println(
+                ".pending {" +
+                "color: #856404;" +
+                "background: #fff3cd;" +
+                "padding: 10px;" +
+                "border-radius: 5px;" +
+                "}"
             );
 
-            response.getWriter().println(
-                "<div class='cards'>"
+            out.println(
+                ".approved {" +
+                "color: #155724;" +
+                "background: #d4edda;" +
+                "padding: 10px;" +
+                "border-radius: 5px;" +
+                "}"
             );
 
-            // Student information
-            response.getWriter().println(
-                "<div class='card'>" +
-                "<h2>Student Information</h2>" +
-
-                "<p><strong>Student ID:</strong> " +
-                studentId + "</p>" +
-
-                "<p><strong>Name:</strong> " +
-                name + "</p>" +
-
-                "<p><strong>Email:</strong> " +
-                email + "</p>" +
-
-                "<p><strong>Phone:</strong> " +
-                phone + "</p>" +
-
-                "<p><strong>Branch:</strong> " +
-                branch + "</p>" +
-
-                "<p><strong>Year:</strong> " +
-                year + "</p>" +
-
-                "</div>"
+            out.println(
+                ".rejected {" +
+                "color: #721c24;" +
+                "background: #f8d7da;" +
+                "padding: 10px;" +
+                "border-radius: 5px;" +
+                "}"
             );
 
-            // Hostel actions
-            response.getWriter().println(
-                "<div class='card'>" +
-                "<h2>Hostel Services</h2>" +
-
-                "<a class='btn' href='allocation.html'>" +
-                "Apply for Room" +
-                "</a>" +
-
-                "<a class='btn' " +
-                "href='MyAllocationServlet?studentId=" +
-                studentId + "'>" +
-                "My Allocation" +
-                "</a>" +
-
-                "</div>"
+            out.println(
+                "a {" +
+                "display: inline-block;" +
+                "margin-top: 15px;" +
+                "margin-right: 10px;" +
+                "padding: 10px 15px;" +
+                "background: #007bff;" +
+                "color: white;" +
+                "text-decoration: none;" +
+                "border-radius: 5px;" +
+                "}"
             );
 
-            response.getWriter().println(
-                "</div>"
+            out.println(
+                ".logout {" +
+                "background: #dc3545;" +
+                "}"
             );
 
-            response.getWriter().println(
-                "</div>"
+            out.println("</style>");
+
+            out.println("</head>");
+
+            out.println("<body>");
+
+            out.println("<div class='container'>");
+
+            out.println(
+                "<h2>Student Dashboard</h2>"
             );
 
-            response.getWriter().println(
-                "</body></html>"
+            // =====================================================
+            // STUDENT INFORMATION
+            // =====================================================
+
+            out.println("<div class='info'>");
+
+            out.println(
+                "<b>Student ID:</b> "
+                + studentId
+                + "<br>"
             );
 
-            rs.close();
-            ps.close();
+            out.println(
+                "<b>Name:</b> "
+                + name
+                + "<br>"
+            );
+
+            out.println(
+                "<b>Email:</b> "
+                + email
+                + "<br>"
+            );
+
+            out.println(
+                "<b>Phone:</b> "
+                + phone
+                + "<br>"
+            );
+
+            out.println(
+                "<b>Branch:</b> "
+                + branch
+                + "<br>"
+            );
+
+            out.println(
+                "<b>Year:</b> "
+                + year
+                + "<br>"
+            );
+
+            out.println("</div>");
+
+            // =====================================================
+            // ALLOCATION STATUS
+            // =====================================================
+
+            out.println("<div class='status'>");
+
+            out.println(
+                "<b>Allocation Status:</b>"
+            );
+
+            if (latestStatus.equalsIgnoreCase("Pending")) {
+
+                out.println(
+                    "<div class='pending'>" +
+                    "Your room allocation request is " +
+                    "<b>Pending</b> and waiting for admin approval." +
+                    "</div>"
+                );
+
+            } else if (
+                    latestStatus.equalsIgnoreCase("Approved")) {
+
+                out.println(
+                    "<div class='approved'>" +
+                    "Your room allocation request has been " +
+                    "<b>Approved</b>." +
+                    "</div>"
+                );
+
+            } else if (
+                    latestStatus.equalsIgnoreCase("Rejected")) {
+
+                out.println(
+                    "<div class='rejected'>" +
+                    "Your previous room allocation request was " +
+                    "<b>Rejected</b>." +
+                    "</div>"
+                );
+
+            } else {
+
+                out.println(
+                    "<p>Not Allocated</p>"
+                );
+            }
+
+            out.println("</div>");
+
+            // =====================================================
+            // BUTTONS BASED ON STATUS
+            // =====================================================
+
+            if (latestStatus.equalsIgnoreCase("Pending")) {
+
+                // -----------------------------------------------
+                // PENDING
+                // -----------------------------------------------
+
+                out.println(
+                    "<p style='margin-top:20px;'>" +
+                    "<b>Room Already Requested</b>" +
+                    "<br>" +
+                    "You cannot submit another room request " +
+                    "while your current request is Pending." +
+                    "</p>"
+                );
+
+            } else if (
+                    latestStatus.equalsIgnoreCase("Approved")) {
+
+                // -----------------------------------------------
+                // APPROVED
+                // -----------------------------------------------
+
+                out.println(
+                    "<a href='MyAllocationServlet'>" +
+                    "My Allocation" +
+                    "</a>"
+                );
+
+            } else {
+
+                // -----------------------------------------------
+                // REJECTED OR NOT APPLIED
+                // -----------------------------------------------
+
+                out.println(
+                    "<a href='allocation.html'>" +
+                    "Apply for Room" +
+                    "</a>"
+                );
+            }
+
+            // =====================================================
+            // LOGOUT
+            // =====================================================
+
+            out.println(
+                "<a href='LogoutServlet' " +
+                "class='logout'>" +
+                "Logout" +
+                "</a>"
+            );
+
+            out.println("</div>");
+
+            out.println("</body>");
+
+            out.println("</html>");
+
             con.close();
 
         } catch (Exception e) {
 
             e.printStackTrace();
 
-            response.getWriter().println(
+            response.setContentType("text/html");
+
+            PrintWriter out =
+                    response.getWriter();
+
+            out.println(
                 "<h2>Dashboard Error</h2>"
             );
 
-            response.getWriter().println(
-                "<p>" + e.getMessage() + "</p>"
+            out.println(
+                "<p><b>Error:</b> "
+                + e.getMessage()
+                + "</p>"
             );
         }
     }

@@ -23,25 +23,18 @@ public class AdminDashboardServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        // ==============================
-        // ADMIN SESSION CHECK
-        // ==============================
-
         HttpSession session = request.getSession(false);
 
         if (session == null ||
-            session.getAttribute("adminId") == null) {
+                session.getAttribute("adminId") == null) {
 
             response.sendRedirect("admin-login.html");
             return;
         }
 
-        // Prevent browser caching
         response.setHeader("Cache-Control",
                 "no-cache, no-store, must-revalidate");
-
         response.setHeader("Pragma", "no-cache");
-
         response.setDateHeader("Expires", 0);
 
         response.setContentType("text/html;charset=UTF-8");
@@ -52,9 +45,15 @@ public class AdminDashboardServlet extends HttpServlet {
 
             con = DatabaseConnection.getConnection();
 
-            // ==============================
+            if (con == null) {
+                throw new Exception("Database connection failed.");
+            }
+
+            // ==========================================
             // TOTAL STUDENTS
-            // ==============================
+            // ==========================================
+
+            int totalStudents = 0;
 
             String studentSql =
                     "SELECT COUNT(*) FROM students";
@@ -65,8 +64,6 @@ public class AdminDashboardServlet extends HttpServlet {
             ResultSet studentRs =
                     studentPs.executeQuery();
 
-            int totalStudents = 0;
-
             if (studentRs.next()) {
                 totalStudents = studentRs.getInt(1);
             }
@@ -75,9 +72,11 @@ public class AdminDashboardServlet extends HttpServlet {
             studentPs.close();
 
 
-            // ==============================
+            // ==========================================
             // TOTAL ROOMS
-            // ==============================
+            // ==========================================
+
+            int totalRooms = 0;
 
             String roomSql =
                     "SELECT COUNT(*) FROM rooms";
@@ -88,8 +87,6 @@ public class AdminDashboardServlet extends HttpServlet {
             ResultSet roomRs =
                     roomPs.executeQuery();
 
-            int totalRooms = 0;
-
             if (roomRs.next()) {
                 totalRooms = roomRs.getInt(1);
             }
@@ -98,9 +95,11 @@ public class AdminDashboardServlet extends HttpServlet {
             roomPs.close();
 
 
-            // ==============================
+            // ==========================================
             // AVAILABLE ROOMS
-            // ==============================
+            // ==========================================
+
+            int availableRooms = 0;
 
             String availableSql =
                     "SELECT COUNT(*) FROM rooms " +
@@ -112,8 +111,6 @@ public class AdminDashboardServlet extends HttpServlet {
             ResultSet availableRs =
                     availablePs.executeQuery();
 
-            int availableRooms = 0;
-
             if (availableRs.next()) {
                 availableRooms = availableRs.getInt(1);
             }
@@ -122,9 +119,11 @@ public class AdminDashboardServlet extends HttpServlet {
             availablePs.close();
 
 
-            // ==============================
+            // ==========================================
             // OCCUPIED ROOMS
-            // ==============================
+            // ==========================================
+
+            int occupiedRooms = 0;
 
             String occupiedSql =
                     "SELECT COUNT(*) FROM rooms " +
@@ -136,8 +135,6 @@ public class AdminDashboardServlet extends HttpServlet {
             ResultSet occupiedRs =
                     occupiedPs.executeQuery();
 
-            int occupiedRooms = 0;
-
             if (occupiedRs.next()) {
                 occupiedRooms = occupiedRs.getInt(1);
             }
@@ -146,21 +143,21 @@ public class AdminDashboardServlet extends HttpServlet {
             occupiedPs.close();
 
 
-            // ==============================
+            // ==========================================
             // PENDING REQUESTS
-            // ==============================
+            // ==========================================
+
+            int pendingRequests = 0;
 
             String pendingSql =
                     "SELECT COUNT(*) FROM allocations " +
-                    "WHERE status = 'Pending'";
+                    "WHERE LOWER(TRIM(status)) = 'pending'";
 
             PreparedStatement pendingPs =
                     con.prepareStatement(pendingSql);
 
             ResultSet pendingRs =
                     pendingPs.executeQuery();
-
-            int pendingRequests = 0;
 
             if (pendingRs.next()) {
                 pendingRequests = pendingRs.getInt(1);
@@ -170,315 +167,884 @@ public class AdminDashboardServlet extends HttpServlet {
             pendingPs.close();
 
 
-            // ==============================
+            // ==========================================
+            // APPROVED ALLOCATIONS
+            // ==========================================
+
+            int approvedRequests = 0;
+
+            String approvedSql =
+                    "SELECT COUNT(*) FROM allocations " +
+                    "WHERE LOWER(TRIM(status)) = 'approved'";
+
+            PreparedStatement approvedPs =
+                    con.prepareStatement(approvedSql);
+
+            ResultSet approvedRs =
+                    approvedPs.executeQuery();
+
+            if (approvedRs.next()) {
+                approvedRequests = approvedRs.getInt(1);
+            }
+
+            approvedRs.close();
+            approvedPs.close();
+            String latestRequestsHtml = "";
+
+            String latestSql =
+                    "SELECT allocation_id, student_id, room_id, reason, status " +
+                    "FROM allocations " +
+                    "ORDER BY allocation_id DESC " +
+                    "LIMIT 5";
+
+            PreparedStatement latestPs =
+                    con.prepareStatement(latestSql);
+
+            ResultSet latestRs =
+                    latestPs.executeQuery();
+
+            while (latestRs.next()) {
+
+                int allocationId =
+                        latestRs.getInt("allocation_id");
+
+                String studentId =
+                        latestRs.getString("student_id");
+
+                int roomId =
+                        latestRs.getInt("room_id");
+
+                String reason =
+                        latestRs.getString("reason");
+
+                String status =
+                        latestRs.getString("status");
+
+                if (reason == null || reason.trim().isEmpty()) {
+                    reason = "No reason provided";
+                }
+
+                latestRequestsHtml +=
+                        "<tr>" +
+                        "<td>" + allocationId + "</td>" +
+                        "<td>" + studentId + "</td>" +
+                        "<td>Room " + roomId + "</td>" +
+                        "<td>" + reason + "</td>" +
+                        "<td><b>" + status + "</b></td>" +
+                        "</tr>";
+            }
+
+            latestRs.close();
+            latestPs.close();
+
+            // ==========================================
+            // ROOM OCCUPANCY PERCENTAGE
+            // ==========================================
+
+            int occupancyPercentage = 0;
+
+            if (totalRooms > 0) {
+
+                occupancyPercentage =
+                        (occupiedRooms * 100) / totalRooms;
+            }
+
+
+            // ==========================================
             // ADMIN NAME
-            // ==============================
+            // ==========================================
 
             String adminName =
                     (String) session.getAttribute("adminName");
 
-            if (adminName == null) {
-                adminName = "Admin";
+            if (adminName == null ||
+                    adminName.trim().isEmpty()) {
+
+                adminName = "Hostel Administrator";
             }
 
 
-            // ==============================
-            // HTML PAGE
-            // ==============================
+            // ==========================================
+            // HTML
+            // ==========================================
 
-            response.getWriter().println(
-                "<!DOCTYPE html>"
-            );
-
-            response.getWriter().println(
-                "<html lang='en'>"
-            );
-
-            response.getWriter().println(
-                "<head>"
-            );
-
-            response.getWriter().println(
-                "<meta charset='UTF-8'>"
-            );
-
-            response.getWriter().println(
-                "<meta name='viewport' " +
-                "content='width=device-width, initial-scale=1.0'>"
-            );
-
-            response.getWriter().println(
-                "<title>Admin Dashboard | HostelHub</title>"
-            );
+            StringBuilder html =
+                    new StringBuilder();
 
 
-            // ==============================
+            html.append("<!DOCTYPE html>");
+
+            html.append("<html lang='en'>");
+
+            html.append("<head>");
+
+            html.append(
+                    "<meta charset='UTF-8'>");
+
+            html.append(
+                    "<meta name='viewport' " +
+                    "content='width=device-width, " +
+                    "initial-scale=1.0'>");
+
+            html.append(
+                    "<title>Admin Dashboard | HostelHub</title>");
+
+
+            // ==========================================
             // CSS
-            // ==============================
+            // ==========================================
 
-            response.getWriter().println(
-                "<style>" +
+            html.append("<style>");
 
-                "* {" +
-                "margin:0;" +
-                "padding:0;" +
-                "box-sizing:border-box;" +
-                "font-family:Arial,sans-serif;" +
-                "}" +
-
-                "body {" +
-                "background:#f4f8fc;" +
-                "min-height:100vh;" +
-                "}" +
-
-                ".navbar {" +
-                "background:#1e3a5f;" +
-                "color:white;" +
-                "padding:18px 40px;" +
-                "display:flex;" +
-                "justify-content:space-between;" +
-                "align-items:center;" +
-                "}" +
-
-                ".logo {" +
-                "font-size:26px;" +
-                "font-weight:bold;" +
-                "}" +
-
-                ".logo span {" +
-                "color:#2196f3;" +
-                "}" +
-
-                ".logout {" +
-                "background:#e53935;" +
-                "color:white;" +
-                "text-decoration:none;" +
-                "padding:9px 18px;" +
-                "border-radius:6px;" +
-                "}" +
-
-                ".logout:hover {" +
-                "background:#c62828;" +
-                "}" +
-
-                ".container {" +
-                "width:90%;" +
-                "max-width:1100px;" +
-                "margin:40px auto;" +
-                "}" +
-
-                "h1 {" +
-                "color:#1e3a5f;" +
-                "margin-bottom:8px;" +
-                "}" +
-
-                ".subtitle {" +
-                "color:#666;" +
-                "margin-bottom:30px;" +
-                "}" +
-
-                ".stats {" +
-                "display:flex;" +
-                "gap:20px;" +
-                "flex-wrap:wrap;" +
-                "}" +
-
-                ".card {" +
-                "background:white;" +
-                "padding:25px;" +
-                "border-radius:10px;" +
-                "box-shadow:0 5px 15px rgba(0,0,0,0.10);" +
-                "flex:1;" +
-                "min-width:180px;" +
-                "}" +
-
-                ".card h3 {" +
-                "color:#555;" +
-                "margin-bottom:10px;" +
-                "}" +
-
-                ".card h2 {" +
-                "font-size:32px;" +
-                "color:#2196f3;" +
-                "}" +
-
-                ".links {" +
-                "margin-top:30px;" +
-                "background:white;" +
-                "padding:25px;" +
-                "border-radius:10px;" +
-                "}" +
-
-                ".btn {" +
-                "display:inline-block;" +
-                "padding:12px 18px;" +
-                "margin:8px;" +
-                "background:#2196f3;" +
-                "color:white;" +
-                "text-decoration:none;" +
-                "border-radius:6px;" +
-                "}" +
-
-                ".btn:hover {" +
-                "background:#1769aa;" +
-                "}" +
-
-                "</style>"
+            html.append(
+                    "*{" +
+                    "margin:0;" +
+                    "padding:0;" +
+                    "box-sizing:border-box;" +
+                    "font-family:Arial,sans-serif;" +
+                    "}"
             );
 
-            response.getWriter().println(
-                "</head>"
-            );
-
-            response.getWriter().println(
-                "<body>"
+            html.append(
+                    "body{" +
+                    "background:#f4f7fb;" +
+                    "color:#263238;" +
+                    "min-height:100vh;" +
+                    "}"
             );
 
 
-            // ==============================
-            // NAVIGATION BAR
-            // ==============================
+            // HEADER
 
-            response.getWriter().println(
-                "<div class='navbar'>"
+            html.append(
+                    ".header{" +
+                    "height:72px;" +
+                    "background:#1e3a5f;" +
+                    "display:flex;" +
+                    "align-items:center;" +
+                    "justify-content:space-between;" +
+                    "padding:0 45px;" +
+                    "color:white;" +
+                    "}"
             );
 
-            response.getWriter().println(
-                "<div class='logo'>" +
-                "Hostel<span>Hub</span>" +
-                "</div>"
+            html.append(
+                    ".logo{" +
+                    "font-size:28px;" +
+                    "font-weight:bold;" +
+                    "}"
             );
 
-            response.getWriter().println(
-                "<a href='LogoutServlet' " +
-                "class='logout'>Logout</a>"
+            html.append(
+                    ".logo span{" +
+                    "color:#2196f3;" +
+                    "}"
             );
 
-            response.getWriter().println(
-                "</div>"
+            html.append(
+                    ".header-right{" +
+                    "display:flex;" +
+                    "align-items:center;" +
+                    "gap:22px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".admin-label{" +
+                    "font-size:15px;" +
+                    "color:#e8eef5;" +
+                    "}"
+            );
+
+            html.append(
+                    ".logout{" +
+                    "background:#e53935;" +
+                    "color:white;" +
+                    "text-decoration:none;" +
+                    "padding:10px 20px;" +
+                    "border-radius:6px;" +
+                    "font-weight:bold;" +
+                    "}"
+            );
+
+            html.append(
+                    ".logout:hover{" +
+                    "background:#c62828;" +
+                    "}"
             );
 
 
-            // ==============================
             // MAIN CONTAINER
-            // ==============================
 
-            response.getWriter().println(
-                "<div class='container'>"
-            );
-
-            response.getWriter().println(
-                "<h1>Admin Dashboard</h1>"
-            );
-
-            response.getWriter().println(
-                "<p class='subtitle'>" +
-                "Welcome, " + adminName +
-                "</p>"
+            html.append(
+                    ".container{" +
+                    "width:92%;" +
+                    "max-width:1200px;" +
+                    "margin:35px auto 50px;" +
+                    "}"
             );
 
 
-            // ==============================
+            // WELCOME
+
+            html.append(
+                    ".welcome{" +
+                    "margin-bottom:28px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".welcome h1{" +
+                    "font-size:34px;" +
+                    "color:#1e3a5f;" +
+                    "margin-bottom:7px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".welcome p{" +
+                    "font-size:17px;" +
+                    "color:#697586;" +
+                    "}"
+            );
+
+
             // STATISTICS
-            // ==============================
 
-            response.getWriter().println(
-                "<div class='stats'>"
+            html.append(
+                    ".stats{" +
+                    "display:grid;" +
+                    "grid-template-columns:repeat(5,1fr);" +
+                    "gap:18px;" +
+                    "margin-bottom:25px;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "<div class='card'>" +
-                "<h3>Total Students</h3>" +
-                "<h2>" + totalStudents + "</h2>" +
-                "</div>"
+            html.append(
+                    ".stat-card{" +
+                    "background:white;" +
+                    "border-radius:12px;" +
+                    "padding:23px;" +
+                    "box-shadow:" +
+                    "0 5px 18px rgba(30,58,95,0.08);" +
+                    "border:1px solid #edf1f5;" +
+                    "}"
+            );
+
+            html.append(
+                    ".stat-title{" +
+                    "font-size:14px;" +
+                    "font-weight:bold;" +
+                    "color:#697586;" +
+                    "margin-bottom:12px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".stat-value{" +
+                    "font-size:32px;" +
+                    "font-weight:bold;" +
+                    "color:#2196f3;" +
+                    "}"
+            );
+
+            html.append(
+                    ".stat-small{" +
+                    "font-size:12px;" +
+                    "color:#8a94a6;" +
+                    "margin-top:6px;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "<div class='card'>" +
-                "<h3>Total Rooms</h3>" +
-                "<h2>" + totalRooms + "</h2>" +
-                "</div>"
+            // MAIN GRID
+
+            html.append(
+                    ".dashboard-grid{" +
+                    "display:grid;" +
+                    "grid-template-columns:1.35fr 1fr;" +
+                    "gap:22px;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "<div class='card'>" +
-                "<h3>Available Rooms</h3>" +
-                "<h2>" + availableRooms + "</h2>" +
-                "</div>"
+            // PANEL
+
+            html.append(
+                    ".panel{" +
+                    "background:white;" +
+                    "border-radius:12px;" +
+                    "padding:28px;" +
+                    "box-shadow:" +
+                    "0 5px 18px rgba(30,58,95,0.08);" +
+                    "border:1px solid #edf1f5;" +
+                    "}"
+            );
+
+            html.append(
+                    ".panel h2{" +
+                    "font-size:21px;" +
+                    "color:#1e3a5f;" +
+                    "margin-bottom:8px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".panel-subtitle{" +
+                    "color:#7b8794;" +
+                    "font-size:14px;" +
+                    "margin-bottom:25px;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "<div class='card'>" +
-                "<h3>Occupied Rooms</h3>" +
-                "<h2>" + occupiedRooms + "</h2>" +
-                "</div>"
+            // OCCUPANCY
+
+            html.append(
+                    ".occupancy-number{" +
+                    "display:flex;" +
+                    "justify-content:space-between;" +
+                    "align-items:end;" +
+                    "margin-bottom:10px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".percentage{" +
+                    "font-size:34px;" +
+                    "font-weight:bold;" +
+                    "color:#2196f3;" +
+                    "}"
+            );
+
+            html.append(
+                    ".occupancy-text{" +
+                    "color:#687587;" +
+                    "font-size:14px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".progress{" +
+                    "height:14px;" +
+                    "background:#e9eef4;" +
+                    "border-radius:20px;" +
+                    "overflow:hidden;" +
+                    "margin:12px 0 25px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".progress-bar{" +
+                    "height:100%;" +
+                    "width:" +
+                    occupancyPercentage +
+                    "%;" +
+                    "background:#2196f3;" +
+                    "border-radius:20px;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "<div class='card'>" +
-                "<h3>Pending Requests</h3>" +
-                "<h2>" + pendingRequests + "</h2>" +
-                "</div>"
+            // ROOM INFO
+
+            html.append(
+                    ".room-info{" +
+                    "display:grid;" +
+                    "grid-template-columns:1fr 1fr;" +
+                    "gap:15px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".room-box{" +
+                    "background:#f7f9fc;" +
+                    "padding:18px;" +
+                    "border-radius:9px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".room-box strong{" +
+                    "display:block;" +
+                    "font-size:25px;" +
+                    "color:#1e3a5f;" +
+                    "margin-bottom:4px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".room-box span{" +
+                    "font-size:13px;" +
+                    "color:#758195;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "</div>"
-            );
-
-
-            // ==============================
             // QUICK ACTIONS
-            // ==============================
 
-            response.getWriter().println(
-                "<div class='links'>"
+            html.append(
+                    ".actions{" +
+                    "display:grid;" +
+                    "gap:13px;" +
+                    "}"
             );
 
-            response.getWriter().println(
-                "<h2>Quick Actions</h2>"
+            html.append(
+                    ".action{" +
+                    "display:flex;" +
+                    "align-items:center;" +
+                    "justify-content:space-between;" +
+                    "padding:16px 18px;" +
+                    "border:1px solid #e4eaf1;" +
+                    "border-radius:9px;" +
+                    "text-decoration:none;" +
+                    "color:#1e3a5f;" +
+                    "font-weight:bold;" +
+                    "transition:0.2s;" +
+                    "}"
+            );
+
+            html.append(
+                    ".action:hover{" +
+                    "background:#f1f7fd;" +
+                    "border-color:#2196f3;" +
+                    "}"
+            );
+
+            html.append(
+                    ".action span:last-child{" +
+                    "color:#2196f3;" +
+                    "font-size:20px;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "<a class='btn' " +
-                "href='AdminRequestsServlet'>" +
-                "Allocation Requests</a>"
+            // PENDING BOX
+
+            html.append(
+                    ".pending-box{" +
+                    "margin-top:22px;" +
+                    "padding:18px;" +
+                    "border-radius:9px;" +
+                    "background:#fff7e6;" +
+                    "border:1px solid #ffe0a3;" +
+                    "}"
+            );
+
+            html.append(
+                    ".pending-box strong{" +
+                    "color:#9a6700;" +
+                    "font-size:20px;" +
+                    "}"
+            );
+
+            html.append(
+                    ".pending-box p{" +
+                    "margin-top:5px;" +
+                    "font-size:13px;" +
+                    "color:#806b35;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "<a class='btn' " +
-                "href='homepage.html'>" +
-                "Home</a>"
+            // FOOTER
+
+            html.append(
+                    ".footer{" +
+                    "text-align:center;" +
+                    "margin-top:35px;" +
+                    "color:#8a94a6;" +
+                    "font-size:13px;" +
+                    "}"
             );
 
 
-            response.getWriter().println(
-                "</div>"
+            // RESPONSIVE
+
+            html.append(
+                    "@media(max-width:1000px){" +
+                    ".stats{" +
+                    "grid-template-columns:repeat(3,1fr);" +
+                    "}" +
+                    ".dashboard-grid{" +
+                    "grid-template-columns:1fr;" +
+                    "}" +
+                    "}"
+            );
+
+            html.append(
+                    "@media(max-width:650px){" +
+                    ".header{" +
+                    "padding:0 20px;" +
+                    "}" +
+                    ".admin-label{" +
+                    "display:none;" +
+                    "}" +
+                    ".container{" +
+                    "width:94%;" +
+                    "}" +
+                    ".stats{" +
+                    "grid-template-columns:repeat(2,1fr);" +
+                    "}" +
+                    ".welcome h1{" +
+                    "font-size:28px;" +
+                    "}" +
+                    "}"
+            );
+
+            html.append("</style>");
+
+            html.append("</head>");
+
+            html.append("<body>");
+
+
+            // ==========================================
+            // HEADER
+            // ==========================================
+
+            html.append(
+                    "<div class='header'>");
+
+            html.append(
+                    "<div class='logo'>" +
+                    "Hostel<span>Hub</span>" +
+                    "</div>");
+
+            html.append(
+                    "<div class='header-right'>");
+
+            html.append(
+                    "<span class='admin-label'>" +
+                    "Admin Portal" +
+                    "</span>");
+
+            html.append(
+                    "<a href='LogoutServlet' " +
+                    "class='logout'>" +
+                    "Logout" +
+                    "</a>");
+
+            html.append("</div>");
+
+            html.append("</div>");
+
+
+            // ==========================================
+            // MAIN
+            // ==========================================
+
+            html.append(
+                    "<div class='container'>");
+
+
+            // WELCOME
+
+            html.append(
+                    "<div class='welcome'>");
+
+            html.append(
+                    "<h1>Admin Dashboard</h1>");
+
+            html.append(
+                    "<p>Welcome, " +
+                    adminName +
+                    ". Manage your hostel operations from here.</p>");
+
+            html.append("</div>");
+
+
+            // ==========================================
+            // STATISTICS
+            // ==========================================
+
+            html.append(
+                    "<div class='stats'>");
+
+
+            // STUDENTS
+
+            html.append(
+                    "<div class='stat-card'>" +
+                    "<div class='stat-title'>" +
+                    "TOTAL STUDENTS" +
+                    "</div>" +
+                    "<div class='stat-value'>" +
+                    totalStudents +
+                    "</div>" +
+                    "<div class='stat-small'>" +
+                    "Registered students" +
+                    "</div>" +
+                    "</div>"
             );
 
 
-            response.getWriter().println(
-                "</div>"
+            // ROOMS
+
+            html.append(
+                    "<div class='stat-card'>" +
+                    "<div class='stat-title'>" +
+                    "TOTAL ROOMS" +
+                    "</div>" +
+                    "<div class='stat-value'>" +
+                    totalRooms +
+                    "</div>" +
+                    "<div class='stat-small'>" +
+                    "Hostel rooms" +
+                    "</div>" +
+                    "</div>"
             );
 
 
-            response.getWriter().println(
-                "</body>"
+            // AVAILABLE ROOMS
+
+            html.append(
+                    "<div class='stat-card'>" +
+                    "<div class='stat-title'>" +
+                    "AVAILABLE ROOMS" +
+                    "</div>" +
+                    "<div class='stat-value'>" +
+                    availableRooms +
+                    "</div>" +
+                    "<div class='stat-small'>" +
+                    "Ready for allocation" +
+                    "</div>" +
+                    "</div>"
             );
 
-            response.getWriter().println(
-                "</html>"
+
+            // OCCUPIED ROOMS
+
+            html.append(
+                    "<div class='stat-card'>" +
+                    "<div class='stat-title'>" +
+                    "OCCUPIED ROOMS" +
+                    "</div>" +
+                    "<div class='stat-value'>" +
+                    occupiedRooms +
+                    "</div>" +
+                    "<div class='stat-small'>" +
+                    "Currently in use" +
+                    "</div>" +
+                    "</div>"
+            );
+
+
+            // PENDING
+
+            html.append(
+                    "<a href='AdminRequestsServlet' " +
+                    "style='text-decoration:none;color:inherit;'>" +
+                    "<div class='stat-card' " +
+                    "style='cursor:pointer;'>" +
+                    "<div class='stat-title'>" +
+                    "PENDING REQUESTS" +
+                    "</div>" +
+                    "<div class='stat-value'>" +
+                    pendingRequests +
+                    "</div>" +
+                    "<div class='stat-small'>" +
+                    "Click to review requests" +
+                    "</div>" +
+                    "</div>" +
+                    "</a>"
+            );
+
+
+            html.append("</div>");
+
+
+            // ==========================================
+            // DASHBOARD GRID
+            // ==========================================
+
+            html.append(
+                    "<div class='dashboard-grid'>");
+
+
+            // ==========================================
+            // HOSTEL OCCUPANCY
+            // ==========================================
+
+            html.append(
+                    "<div class='panel'>");
+
+            html.append(
+                    "<h2>Hostel Occupancy</h2>");
+
+            html.append(
+                    "<p class='panel-subtitle'>" +
+                    "Current room utilization" +
+                    "</p>");
+
+
+            html.append(
+                    "<div class='occupancy-number'>");
+
+            html.append(
+                    "<span class='occupancy-text'>" +
+                    occupiedRooms +
+                    " of " +
+                    totalRooms +
+                    " rooms occupied" +
+                    "</span>");
+
+            html.append(
+                    "<span class='percentage'>" +
+                    occupancyPercentage +
+                    "%</span>");
+
+            html.append("</div>");
+
+
+            html.append(
+                    "<div class='progress'>");
+
+            html.append(
+                    "<div class='progress-bar'></div>");
+
+            html.append("</div>");
+
+
+            // ROOM INFORMATION
+
+            html.append(
+                    "<div class='room-info'>");
+
+
+            html.append(
+                    "<div class='room-box'>" +
+                    "<strong>" +
+                    availableRooms +
+                    "</strong>" +
+                    "<span>Available Rooms</span>" +
+                    "</div>"
+            );
+
+
+            html.append(
+                    "<div class='room-box'>" +
+                    "<strong>" +
+                    approvedRequests +
+                    "</strong>" +
+                    "<span>Approved Allocations</span>" +
+                    "</div>"
+            );
+
+
+            html.append("</div>");
+
+            html.append("</div>");
+
+
+            // ==========================================
+            // QUICK ACTIONS
+            // ==========================================
+
+            html.append(
+                    "<div class='panel'>");
+
+            html.append(
+                    "<h2>Quick Actions</h2>");
+
+            html.append(
+                    "<p class='panel-subtitle'>" +
+                    "Common administration tasks" +
+                    "</p>");
+
+
+            html.append(
+                    "<div class='actions'>");
+
+
+            // ALLOCATION REQUESTS
+
+            html.append(
+                    "<a class='action' " +
+                    "href='AdminRequestsServlet'>" +
+                    "<span>Allocation Requests</span>" +
+                    "<span>→</span>" +
+                    "</a>"
+            );
+
+
+            // HOMEPAGE
+
+            html.append(
+                    "<a class='action' " +
+                    "href='homepage.html'>" +
+                    "<span>Go to Homepage</span>" +
+                    "<span>→</span>" +
+                    "</a>"
+            );
+
+
+            html.append("</div>");
+
+
+            // ==========================================
+            // PENDING NOTICE
+            // ==========================================
+
+            if (pendingRequests > 0) {
+
+                html.append(
+                        "<div class='pending-box'>");
+
+                html.append(
+                        "<strong>" +
+                        pendingRequests +
+                        " Pending Request");
+
+                if (pendingRequests != 1) {
+                    html.append("s");
+                }
+
+                html.append(
+                        "</strong>");
+
+                html.append(
+                        "<p>" +
+                        "Please review the pending allocation " +
+                        "requests." +
+                        "</p>");
+
+                html.append("</div>");
+            }
+
+
+            html.append("</div>");
+
+            html.append("</div>");
+
+           
+            // ==========================================
+            // FOOTER
+            // ==========================================
+
+            html.append(
+                    "<div class='footer'>" +
+                    "HostelHub Admin Portal • 2026" +
+                    "</div>"
+            );
+
+
+            html.append("</div>");
+
+            html.append("</body>");
+
+            html.append("</html>");
+
+
+            response.getWriter().print(
+                    html.toString()
             );
 
 
             con.close();
+
 
         } catch (Exception e) {
 
@@ -488,17 +1054,22 @@ public class AdminDashboardServlet extends HttpServlet {
 
                 try {
                     con.close();
-
                 } catch (Exception ignored) {
                 }
             }
 
-            response.getWriter().println(
-                "<h2>Admin Dashboard Error</h2>"
+            response.setContentType(
+                    "text/html;charset=UTF-8"
             );
 
             response.getWriter().println(
-                "<p>" + e.getMessage() + "</p>"
+                    "<h2>Admin Dashboard Error</h2>"
+            );
+
+            response.getWriter().println(
+                    "<p>" +
+                    e.getMessage() +
+                    "</p>"
             );
         }
     }
